@@ -1,0 +1,11 @@
+{
+  "projectName": "com.mrlectus.start",
+  "mode": "file-router",
+  "typescript": true,
+  "tailwind": true,
+  "packageManager": "bun",
+  "git": true,
+  "version": 1,
+  "framework": "react-cra",
+  "chosenAddOns": ["biome", "start", "shadcn", "store", "table", "tanstack-query", "oRPC", "form"]
+}
