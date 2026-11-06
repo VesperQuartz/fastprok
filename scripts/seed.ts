@@ -152,6 +152,54 @@ const vendorSeeds: VendorSeed[] = [
     invitationCount: 10,
     responseCount: 9,
   },
+  {
+    name: "Ikeja Tech Hub",
+    contactEmail: "lilbrown3000+vendor-d@gmail.com",
+    categories: ["computer-peripherals"],
+    regions: ["Lagos", "Nigeria"],
+    leadTimeDays: 2,
+    onTimeCount: 11,
+    lateCount: 1,
+    invitationCount: 14,
+    responseCount: 12,
+    contact: { name: "Vendor D", email: "lilbrown3000+vendor-d@gmail.com" },
+  },
+  {
+    name: "Yaba Gadgets",
+    contactEmail: "lilbrown3000+vendor-e@gmail.com",
+    categories: ["computer-peripherals"],
+    regions: ["Lagos", "Nigeria"],
+    leadTimeDays: 4,
+    onTimeCount: 7,
+    lateCount: 2,
+    invitationCount: 9,
+    responseCount: 7,
+    contact: { name: "Vendor E", email: "lilbrown3000+vendor-e@gmail.com" },
+  },
+  {
+    name: "Lekki IT Mart",
+    contactEmail: "lilbrown3000+vendor-f@gmail.com",
+    categories: ["computer-peripherals"],
+    regions: ["Lagos", "Nigeria"],
+    leadTimeDays: 6,
+    onTimeCount: 4,
+    lateCount: 3,
+    invitationCount: 8,
+    responseCount: 5,
+    contact: { name: "Vendor F", email: "lilbrown3000+vendor-f@gmail.com" },
+  },
+  {
+    name: "Abuja Digital Store",
+    contactEmail: "lilbrown3000+vendor-g@gmail.com",
+    categories: ["computer-peripherals"],
+    regions: ["Abuja", "Nigeria"],
+    leadTimeDays: 5,
+    onTimeCount: 6,
+    lateCount: 1,
+    invitationCount: 10,
+    responseCount: 8,
+    contact: { name: "Vendor G", email: "lilbrown3000+vendor-g@gmail.com" },
+  },
 ];
 
 const ensureVendor = async (seed: VendorSeed) => {
@@ -231,5 +279,9 @@ console.log("Approver: lilbrown3000+approver@gmail.com / demo1234");
 console.log("Vendors:  lilbrown3000+vendor-a@gmail.com / demo1234");
 console.log("          lilbrown3000+vendor-b@gmail.com / demo1234");
 console.log("          lilbrown3000+vendor-c@gmail.com / demo1234");
+console.log("          lilbrown3000+vendor-d@gmail.com / demo1234");
+console.log("          lilbrown3000+vendor-e@gmail.com / demo1234");
+console.log("          lilbrown3000+vendor-f@gmail.com / demo1234");
+console.log("          lilbrown3000+vendor-g@gmail.com / demo1234");
 
 await pool.end();

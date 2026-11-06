@@ -61,6 +61,7 @@ export const emailStatus = pgEnum("email_status", [
 
 export type RequestPriority = (typeof requestPriority.enumValues)[number];
 export type RequestStatus = (typeof requestStatus.enumValues)[number];
+export type MembershipRole = (typeof membershipRole.enumValues)[number];
 
 export type ParsedRequest = {
   title: string;
