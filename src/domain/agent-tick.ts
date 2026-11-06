@@ -100,6 +100,7 @@ const requestAudience = async (tx: DbTransaction, organizationId: string, creato
 
 export type AgentTickInput = {
   requestId?: string;
+  forceRank?: boolean;
   actorUserId?: string | null;
 };
 
@@ -189,7 +190,9 @@ export const runAgentTick = async (
         const outstanding = inviteRows.filter((invite) => invite.status === "invited");
         const allResponded = inviteRows.length > 0 && outstanding.length === 0;
         const deadlinePassed = request.deadlineAt.getTime() <= Date.now();
-        const closing = deadlinePassed || (allResponded && quoteRows.length > 0);
+        const forced =
+          input.forceRank === true && input.requestId === request.id && quoteRows.length > 0;
+        const closing = forced || deadlinePassed || (allResponded && quoteRows.length > 0);
 
         if (!closing) {
           const quotedVendors = new Set(quoteRows.map((quote) => quote.vendorId));

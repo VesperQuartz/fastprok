@@ -6,6 +6,7 @@ import { unwrapResult } from "@/lib/result/orpc";
 
 const tickInput = z.object({
   requestId: z.uuid().optional(),
+  forceRank: z.boolean().optional(),
 });
 
 export const tick = buyerProcedure
@@ -15,6 +16,7 @@ export const tick = buyerProcedure
     unwrapResult(
       runAgentTick({
         requestId: input.requestId,
+        forceRank: input.forceRank,
         actorUserId: context.actor.user.id,
       }),
     ),

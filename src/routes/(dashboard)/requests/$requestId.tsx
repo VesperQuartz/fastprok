@@ -200,6 +200,17 @@ const RequestDetailPage = () => {
               />
               {tick.isPending ? "Checking…" : "Run agent check"}
             </Button>
+            {request.status === "quoting" ? (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => tick.mutate({ requestId, forceRank: true })}
+                disabled={tick.isPending}
+              >
+                <HugeiconsIcon icon={SparklesIcon} strokeWidth={2} />
+                Rank now
+              </Button>
+            ) : null}
           </div>
         </div>
       </div>
