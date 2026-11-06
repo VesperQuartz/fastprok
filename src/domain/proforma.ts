@@ -84,7 +84,7 @@ const validateFile = (file: File) => {
     return Result.err(
       new InvalidInputError({
         field: "proforma invoice",
-        detail: "files must be 5 MB or smaller",
+        detail: "files must be 5 megabytes or smaller",
       }),
     );
   }

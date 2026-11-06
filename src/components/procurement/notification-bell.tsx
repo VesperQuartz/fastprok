@@ -61,7 +61,7 @@ export const NotificationBell = () => {
             disabled={unread === 0 || markAll.isPending}
             onClick={() => markAll.mutate()}
           >
-            Mark all read
+            Mark all as read
           </Button>
         </div>
 

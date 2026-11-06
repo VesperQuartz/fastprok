@@ -1,7 +1,7 @@
 import { HugeiconsIcon } from "@hugeicons/react";
 import { BellIcon, BellOffIcon } from "@hugeicons/core-free-icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { NotificationRow } from "@/components/procurement/notification-row";
 import { Badge } from "@/components/ui/badge";
@@ -45,7 +45,7 @@ const NotificationsPage = () => {
             ) : null}
           </div>
           <p className="mt-1 text-muted-foreground text-sm">
-            Invitations, quotes, reminders, and approvals across your workspace.
+            Invitations, quotes, reminders, and approvals.
           </p>
         </div>
         <Button
@@ -53,30 +53,19 @@ const NotificationsPage = () => {
           disabled={unread === 0 || markAll.isPending}
           onClick={() => markAll.mutate()}
         >
-          Mark all read
+          Mark all as read
         </Button>
       </div>
 
-      <div className="flex items-center justify-between gap-3">
-        <Tabs
-          value={filter}
-          onValueChange={(value) => setFilter(value === "unread" ? "unread" : "all")}
-        >
-          <TabsList>
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="unread">Unread</TabsTrigger>
-          </TabsList>
-        </Tabs>
-        <Button
-          variant="ghost"
-          size="sm"
-          nativeButton={false}
-          render={<Link to="/" />}
-          className="text-muted-foreground"
-        >
-          Back to requests
-        </Button>
-      </div>
+      <Tabs
+        value={filter}
+        onValueChange={(value) => setFilter(value === "unread" ? "unread" : "all")}
+      >
+        <TabsList>
+          <TabsTrigger value="all">All</TabsTrigger>
+          <TabsTrigger value="unread">Unread</TabsTrigger>
+        </TabsList>
+      </Tabs>
 
       <Card className="border-border/70 shadow-none">
         <CardContent className="p-0">

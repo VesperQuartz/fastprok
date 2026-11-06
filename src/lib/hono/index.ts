@@ -84,7 +84,7 @@ app.post(
   "/vendor/requests/:requestId/proforma",
   bodyLimit({
     maxSize: 6 * 1024 * 1024,
-    onError: (c) => c.json({ message: "Files must be 5 MB or smaller." }, 413),
+    onError: (c) => c.json({ message: "Files must be 5 megabytes or smaller." }, 413),
   }),
   async (c) => {
     const actor = await loadActor(c.req.raw.headers);

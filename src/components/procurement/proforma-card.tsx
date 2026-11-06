@@ -14,7 +14,7 @@ const MAX_BYTES = 5 * 1024 * 1024;
 
 const validate = (file: File) => {
   if (file.size > MAX_BYTES) {
-    return "Files must be 5 MB or smaller.";
+    return "Files must be 5 megabytes or smaller.";
   }
 
   const allowed = ["application/pdf", "image/png", "image/jpeg"];
@@ -101,7 +101,7 @@ export const ProformaCard = ({
       </CardHeader>
       <CardContent className="space-y-3">
         <p className="text-muted-foreground text-xs text-pretty">
-          PDF, PNG, or JPG up to 5 MB. The buyer sees it alongside your quote.
+          PDF, PNG, or JPG up to 5 megabytes. The buyer sees it alongside your quote.
         </p>
 
         {document && quoteId ? <ProformaAttachment quoteId={quoteId} document={document} /> : null}
@@ -111,6 +111,7 @@ export const ProformaCard = ({
             <Input
               key={inputKey}
               type="file"
+              aria-label="Choose a proforma invoice file"
               accept=".pdf,.png,.jpg,.jpeg,application/pdf,image/png,image/jpeg"
               className="h-auto py-1.5"
               onChange={(event) => {
