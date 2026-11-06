@@ -1,6 +1,21 @@
-export BETTER_AUTH_BASE_URL=
-export VITE_BASE_URL=""
-export BETTER_AUTH_SECRET=
-export DB_URL=""
-export MAIL_USER=""
-export MAIL_PASS=""
+export NODE_ENV=development
+export HOST=127.0.0.1
+export PORT=3000
+
+export APP_BASE_URL=http://localhost:3000
+export BETTER_AUTH_BASE_URL=http://localhost:3000
+export BETTER_AUTH_SECRET=replace-with-a-long-random-string
+
+export DB_URL=postgres://user:password@host:5432/database
+export DB_SSL_CA=./ca-certificate.crt
+export MIGRATIONS_DIR=./drizzle
+
+export RESEND_API_KEY=
+export RESEND_FROM=example.com
+
+export VULTR_INFERENCE_API_KEY=
+export VULTR_INFERENCE_MODEL=deepseek-v4.1-flash-1017
+
+export DEMO_MODE=true
+export DEMO_EMAIL_OVERRIDE=
+export AGENT_TICK_MS=60000
