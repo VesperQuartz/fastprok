@@ -4,6 +4,7 @@ import { base } from "../base";
 import { requestProcedures } from "./requests";
 import { vendorProcedures } from "./vendor";
 import { agentProcedures, notificationProcedures } from "./agent";
+import accountProcedures from "./account";
 
 export const ping = base.route({ method: "GET", path: "/ping" }).handler(() => ({
   ok: true,
@@ -42,6 +43,7 @@ export const me = actorProcedure.route({ method: "GET", path: "/me" }).handler((
 export default {
   ping,
   me,
+  account: accountProcedures,
   requests: requestProcedures,
   vendor: vendorProcedures,
   agent: agentProcedures,

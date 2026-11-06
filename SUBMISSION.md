@@ -35,7 +35,7 @@ Password for all: `demo1234`
 ## 2–3 minute video script
 
 1. **0:00–0:15 — Hook.** Dashboard. "A purchase request usually means a week of email. Watch this one finish in minutes."
-2. **0:15–0:55 — Request.** Sign in as Requester, open **New request**, paste: "We need 15 USB-C docking stations for the customer success team in Lagos. Needed by 24 November. Budget is $1,800. Prioritise the cheapest reliable option." Submit. Point out the AI-structured fields, the invited vendors, and the agent timeline.
+2. **0:15–0:55 — Request.** Sign in as Requester, open **New request**, paste: "We need 15 USB-C docking stations for the customer success team in Lagos. Needed by 24 November. Budget is ₦2,700,000. Prioritise the cheapest reliable option." Submit. Point out the AI-structured fields, the invited vendors, and the agent timeline.
 3. **0:55–1:25 — Vendor side.** Sign out, use the Vendor demo button. Open the invitation, submit a quote, then edit the price. Mention that quotes are private and versions are kept.
 4. **1:25–1:55 — Agent work.** Back as Requester. Open the request and press **Run agent check** / **Rank now**. Show the ranked quotes, the score breakdown, flags such as over budget, and the AI reasons that quote only the scored numbers.
 5. **1:55–2:25 — Approval.** Sign in as Approver, add a short note, approve the winner. Show the request status change and the winner/other notifications. Mention only a human can approve.

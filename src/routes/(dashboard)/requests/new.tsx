@@ -218,7 +218,7 @@ const NewRequestPage = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="budget">Budget (USD, optional)</Label>
+                <Label htmlFor="budget">Budget (NGN, optional)</Label>
                 <Input
                   id="budget"
                   type="number"

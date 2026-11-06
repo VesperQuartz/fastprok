@@ -181,7 +181,7 @@ const VendorRequestPage = () => {
             <form onSubmit={onSubmit} className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="unitPrice">Unit price (USD)</Label>
+                  <Label htmlFor="unitPrice">Unit price (NGN)</Label>
                   <Input
                     id="unitPrice"
                     type="number"

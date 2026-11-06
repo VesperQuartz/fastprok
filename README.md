@@ -19,7 +19,7 @@ All accounts use the password `demo1234`.
 | Vendor (office furniture)     | `lilbrown3000+vendor-b@gmail.com` |
 | Vendor (office furniture)     | `lilbrown3000+vendor-c@gmail.com` |
 
-The login page has one-click demo buttons for the requester, approver, and a vendor.
+The login page has one-click demo buttons for the requester, approver, and a vendor. New teams can self-register at `/register` as an organization or a vendor.
 
 ## What the demo covers
 
@@ -149,7 +149,7 @@ The app is deployed with Dokploy on a Vultr VM and served at `https://fastprok.k
 
 - Email replies are not read; vendors quote in the app. Inbound email parsing is the next step.
 - Delivery tracking and delay chasing are out of scope for this demo.
-- Single currency (USD) and a fixed category list keep the demo focused.
+- Single currency (NGN) and a fixed category list keep the demo focused.
 - Vendor reliability is seeded history; the next version should update it from completed orders.
 - Member invitations, multiple contacts per vendor, and a rejection flow are intentionally deferred.
 

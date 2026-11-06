@@ -217,7 +217,7 @@ export const requests = pgTable(
     deliveryRegion: text("delivery_region").notNull(),
     neededBy: date("needed_by", { mode: "string" }).notNull(),
     budgetCents: integer("budget_cents"),
-    currency: char("currency", { length: 3 }).notNull().default("USD"),
+    currency: char("currency", { length: 3 }).notNull().default("NGN"),
     priority: requestPriority("priority").notNull().default("balanced"),
     status: requestStatus("status").notNull().default("draft"),
     deadlineAt: timestamp("deadline_at", { withTimezone: true }).notNull(),

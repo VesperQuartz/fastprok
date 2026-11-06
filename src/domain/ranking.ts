@@ -1,3 +1,4 @@
+import { formatMoney } from "@/lib/money";
 import type { Recommendation, RequestPriority, RankedQuote } from "@/repo/schema";
 
 const DAY_MS = 24 * 60 * 60 * 1_000;
@@ -81,7 +82,7 @@ const summarize = (ranked: RankedQuote[], request: RankingRequest) => {
 
   return [
     `Ranked ${ranked.length} quote${ranked.length === 1 ? "" : "s"} for ${request.quantity} units needed by ${request.neededBy}.`,
-    `Top pick: ${winner.vendorName} at ${(winner.totalPriceCents / 100).toFixed(2)} USD, delivering ${winner.deliveryDate}.`,
+    `Top pick: ${winner.vendorName} at ${formatMoney(winner.totalPriceCents)}, delivering ${winner.deliveryDate}.`,
     missing > 0
       ? `${missing} quote${missing === 1 ? "" : "s"} missed the quantity or delivery requirement.`
       : "Every quote meets the quantity and delivery requirements.",

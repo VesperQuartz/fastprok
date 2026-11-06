@@ -1,6 +1,7 @@
 import { Result } from "better-result";
 import { z } from "zod";
 import { serverEnv } from "@/env/server";
+import { formatMoney } from "@/lib/money";
 import { AiError } from "@/lib/result/errors";
 import type { Recommendation } from "@/repo/schema";
 
@@ -34,7 +35,7 @@ const fallbackReasonFor = (recommendation: Recommendation) => {
 
     const missing = quote.flags.length > 0 ? ` Flagged: ${quote.flags.join(", ")}.` : "";
 
-    quote.aiReason = `${quote.vendorName} ranks #${quote.rank} at ${(quote.totalPriceCents / 100).toFixed(2)} USD with delivery on ${quote.deliveryDate}.${missing}`;
+    quote.aiReason = `${quote.vendorName} ranks #${quote.rank} at ${formatMoney(quote.totalPriceCents)} with delivery on ${quote.deliveryDate}.${missing}`;
   }
 };
 
@@ -57,7 +58,7 @@ const callVultr = (recommendation: Recommendation) =>
                 "Return ONLY JSON with keys: summary (two sentences at most), reasons (array of {quoteId, reason}).",
                 "Keep every sentence under 25 words. One idea per sentence.",
                 "Use ONLY numbers and facts supplied in the input. Never invent a price, date, rating, or vendor fact.",
-                "Prices are in cents; convert to USD by dividing by 100.",
+                "Prices are in kobo; convert to NGN by dividing by 100. Write amounts with the ₦ symbol.",
                 "Mention only the top 3 quotes and give one short line for each flagged quote.",
                 "Write plain English for a non-technical buyer. Never mention JSON keys, field names, or scoreBps.",
                 "The summary must name the winning vendor and the main tradeoff. Never say that the ranking is unchanged.",

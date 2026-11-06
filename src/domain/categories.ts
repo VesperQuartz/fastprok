@@ -8,7 +8,7 @@ export type CategoryId = (typeof CATEGORY_IDS)[number];
 
 export const CATEGORIES: ReadonlyArray<{ id: CategoryId; label: string }> = [
   { id: "office-furniture", label: "Office furniture" },
-  { id: "office-supplies", label: "Stationery & office supplies" },
+  { id: "office-supplies", label: "Stationery and office supplies" },
   { id: "computer-peripherals", label: "Computer peripherals" },
 ];
 

@@ -1,9 +1,7 @@
-export const formatMoney = (cents: number, currency = "USD") =>
-  new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency,
-    maximumFractionDigits: 2,
-  }).format(cents / 100);
+import { categoryLabel as categoryLabelForId, type CategoryId } from "@/domain/categories";
+import { formatMoney } from "@/lib/money";
+
+export { formatMoney };
 
 export const formatDate = (value: string) =>
   new Intl.DateTimeFormat("en-GB", {
@@ -58,13 +56,7 @@ const ACTION_LABELS: Record<string, string> = {
 
 export const actionLabel = (action: string) => ACTION_LABELS[action] ?? action;
 
-const CATEGORY_LABELS: Record<string, string> = {
-  "computer-peripherals": "Computer peripherals",
-  "office-furniture": "Office furniture",
-  "office-supplies": "Stationery and office supplies",
-};
-
-export const categoryLabel = (category: string) => CATEGORY_LABELS[category] ?? category;
+export const categoryLabel = (category: string) => categoryLabelForId(category as CategoryId);
 
 const PRIORITY_LABELS: Record<string, string> = {
   balanced: "Balanced",

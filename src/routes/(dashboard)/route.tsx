@@ -4,10 +4,10 @@ import { AppShell } from "@/components/procurement/app-shell";
 
 export const Route = createFileRoute("/(dashboard)")({
   component: DashboardLayout,
-  beforeLoad: async () => {
+  beforeLoad: async ({ location }) => {
     const session = await authServerFn();
 
-    if (!session) {
+    if (!session && location.pathname !== "/") {
       const returnTo = typeof window === "undefined" ? undefined : window.location.href;
 
       throw redirect({
@@ -15,10 +15,18 @@ export const Route = createFileRoute("/(dashboard)")({
         search: returnTo ? { redirect: returnTo } : {},
       });
     }
+
+    return { session };
   },
 });
 
 function DashboardLayout() {
+  const { session } = Route.useRouteContext();
+
+  if (!session) {
+    return <Outlet />;
+  }
+
   return (
     <AppShell>
       <Outlet />

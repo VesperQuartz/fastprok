@@ -1,7 +1,18 @@
 import { canApprove, loadActor } from "@/lib/actor";
-import { ForbiddenError } from "@/lib/result/errors";
+import { auth } from "@/lib/auth";
+import { ForbiddenError, UnauthenticatedError } from "@/lib/result/errors";
 import { toORPCError, unwrapResult } from "@/lib/result/orpc";
 import { base } from "./base";
+
+const withSession = base.use(async ({ context, next }) => {
+  const session = await auth.api.getSession({ headers: context.headers });
+
+  if (!session) {
+    throw toORPCError(new UnauthenticatedError());
+  }
+
+  return next({ context: { user: session.user, session: session.session } });
+});
 
 const withActor = base.use(async ({ context, next }) => {
   const actor = await unwrapResult(loadActor(context.headers));
@@ -48,6 +59,7 @@ const requireVendor = withActor.use(async ({ context, next }) => {
   return next({ context: { actor: context.actor } });
 });
 
+export const sessionProcedure = withSession;
 export const actorProcedure = withActor;
 export const buyerProcedure = requireBuyer;
 export const approverProcedure = requireApprover;

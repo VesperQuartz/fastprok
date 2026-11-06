@@ -2,11 +2,10 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import {
   ArrowRight01Icon,
   CheckmarkCircle02Icon,
-  SparklesIcon,
   Store01Icon,
   UserIcon,
 } from "@hugeicons/core-free-icons";
-import { useNavigate, createFileRoute, redirect } from "@tanstack/react-router";
+import { Link, useNavigate, createFileRoute, redirect } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -64,15 +63,13 @@ const LoginPage = () => {
 
   return (
     <AuthLayout>
-      <div className="mb-5 flex flex-col items-center text-center">
-        <span className="mb-3 flex size-11 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-sm">
-          <HugeiconsIcon icon={SparklesIcon} strokeWidth={2} className="size-5" />
-        </span>
-        <p className="font-semibold text-lg">Procurement Agent</p>
-        <p className="mt-0.5 text-muted-foreground text-sm">
+      <Link to="/" className="mb-5 flex flex-col items-center text-center">
+        <img src="/procurement-mark.png" alt="" className="mb-3 size-11 object-contain" />
+        <span className="font-semibold text-lg">Procurement Agent</span>
+        <span className="mt-0.5 text-muted-foreground text-sm">
           Request, quote, and approve in one workspace.
-        </p>
-      </div>
+        </span>
+      </Link>
 
       <div className="rounded-xl border border-border/70 bg-card p-4">
         <div>

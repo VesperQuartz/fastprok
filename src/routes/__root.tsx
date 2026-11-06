@@ -24,6 +24,13 @@ export const Route = createRootRouteWithContext<RootContext>()({
         title: "Procurement Agent",
       },
     ],
+    links: [
+      {
+        rel: "icon",
+        href: "/procurement-mark.png",
+        type: "image/png",
+      },
+    ],
   }),
 
   shellComponent: RootDocument,

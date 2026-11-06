@@ -5,6 +5,9 @@ import { oc } from "@orpc/contract";
 export const clientContract = {
   ping: oc.route({ method: "GET", path: "/ping" }),
   me: oc.route({ method: "GET", path: "/me" }),
+  account: {
+    provision: oc.route({ method: "POST", path: "/account/provision" }),
+  },
   requests: {
     create: oc.route({ method: "POST", path: "/requests" }),
     list: oc.route({ method: "GET", path: "/requests" }),

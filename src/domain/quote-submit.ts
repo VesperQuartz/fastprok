@@ -3,6 +3,7 @@ import { Result } from "better-result";
 import { serverEnv } from "@/env/server";
 import type { BuyerActor, VendorActor } from "@/lib/actor";
 import { db, type DbTransaction } from "@/lib/db";
+import { formatMoney } from "@/lib/money";
 import { tryDatabase, withTransaction } from "@/lib/result/database";
 import {
   InvalidInputError,
@@ -270,7 +271,7 @@ export const submitQuote = async (
           ? [{ userId: creator.id, name: creator.name, email: creator.email }]
           : [],
         title: `Quote ${status === "created" ? "received" : "updated"} from ${actor.vendorName}`,
-        body: `${actor.vendorName} quoted ${invite.quantity} ${invite.unit} of ${invite.requestTitle} at ${(totalPriceCents / 100).toFixed(2)} USD, delivering ${input.deliveryDate}.`,
+        body: `${actor.vendorName} quoted ${invite.quantity} ${invite.unit} of ${invite.requestTitle} at ${formatMoney(totalPriceCents)}, delivering ${input.deliveryDate}.`,
         email: {
           subject: `Quote ${status === "created" ? "received" : "updated"} for ${invite.requestTitle}`,
           heading: `${actor.vendorName} submitted a quote`,

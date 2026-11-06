@@ -1,7 +1,8 @@
 import { HugeiconsIcon } from "@hugeicons/react";
-import { ArrowRight01Icon, PackageIcon, PlusSignIcon } from "@hugeicons/core-free-icons";
+import { ArrowRight01Icon, PlusSignIcon } from "@hugeicons/core-free-icons";
 import { useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
+import { LandingPage } from "@/components/marketing/landing-page";
 import { StatCard } from "@/components/procurement/stat-card";
 import { StatusBadge } from "@/components/procurement/status-badge";
 import { formatDate, formatDateTime, formatMoney, timeLeft } from "@/components/procurement/format";
@@ -303,7 +304,7 @@ const RequestList = () => {
       <Empty className="border bg-card">
         <EmptyHeader>
           <EmptyMedia variant="icon">
-            <HugeiconsIcon icon={PackageIcon} strokeWidth={1.8} />
+            <img src="/procurement-mark.png" alt="" className="size-8 object-contain" />
           </EmptyMedia>
           <EmptyTitle>No requests yet</EmptyTitle>
           <EmptyDescription>
@@ -353,7 +354,7 @@ const VendorInbox = () => {
       <Empty className="border bg-card">
         <EmptyHeader>
           <EmptyMedia variant="icon">
-            <HugeiconsIcon icon={PackageIcon} strokeWidth={1.8} />
+            <img src="/procurement-mark.png" alt="" className="size-8 object-contain" />
           </EmptyMedia>
           <EmptyTitle>No invitations yet</EmptyTitle>
           <EmptyDescription>
@@ -372,7 +373,7 @@ const VendorInbox = () => {
   );
 };
 
-const Home = () => {
+const WorkspaceHome = () => {
   const me = useQuery(orpc.me.queryOptions());
   const isVendor = me.data?.kind === "vendor";
 
@@ -400,6 +401,16 @@ const Home = () => {
       {isVendor ? <VendorInbox /> : <RequestList />}
     </div>
   );
+};
+
+const Home = () => {
+  const { session } = Route.useRouteContext();
+
+  if (!session) {
+    return <LandingPage />;
+  }
+
+  return <WorkspaceHome />;
 };
 
 export const Route = createFileRoute("/(dashboard)/")({

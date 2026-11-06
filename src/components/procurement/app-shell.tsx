@@ -1,10 +1,5 @@
 import { HugeiconsIcon } from "@hugeicons/react";
-import {
-  DashboardSquare01Icon,
-  Logout01Icon,
-  PlusSignIcon,
-  SparklesIcon,
-} from "@hugeicons/core-free-icons";
+import { DashboardSquare01Icon, Logout01Icon, PlusSignIcon } from "@hugeicons/core-free-icons";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import type { ReactNode } from "react";
@@ -57,9 +52,11 @@ export const AppShell = ({ children }: { children: ReactNode }) => {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton size="lg" tooltip="Procurement Agent" render={<Link to="/" />}>
-                <span className="flex size-8 shrink-0 items-center justify-center rounded-[10px] bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-sm">
-                  <HugeiconsIcon icon={SparklesIcon} strokeWidth={2} className="size-4" />
-                </span>
+                <img
+                  src="/procurement-mark.png"
+                  alt=""
+                  className="size-8 shrink-0 object-contain"
+                />
                 <span className="grid min-w-0 flex-1 leading-tight group-data-[collapsible=icon]:hidden">
                   <span className="truncate font-semibold text-[15px]">Procurement Agent</span>
                   <span className="truncate text-muted-foreground text-xs">{workspaceName}</span>

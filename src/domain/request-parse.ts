@@ -88,7 +88,7 @@ const systemPrompt = () => {
     `Today is ${today}. Categories: ${CATEGORY_IDS.join(", ")}.`,
     "Priority values: balanced, cost, speed, reliability.",
     "Use null for anything the buyer did not state. Never invent a quantity, date, budget, or region.",
-    "Dates must use YYYY-MM-DD. Money must be an integer number of cents (USD unless stated).",
+    "Dates must use YYYY-MM-DD. The app uses Nigerian naira (NGN) only. Return budgetCents as an integer number of kobo (1 NGN = 100 kobo) and set currency to NGN.",
     "title should be a short item title, not a full sentence.",
     "confidence is a number from 0 to 1 describing how completely the message was understood.",
   ].join("\n");
@@ -185,7 +185,7 @@ const heuristicsFromText = (text: string) => {
   const isoDateMatch = text.match(/\b(20\d{2}-\d{2}-\d{2})\b/);
   const relativeDaysMatch = text.match(/\b(?:within|in|after)\s+(\d{1,3})\s+days?\b/i);
   const budgetMatch = text.match(
-    /(?:budget|up to|max(?:imum)?(?: of)?)\s*(?:usd|\$)?\s*([\d,]+(?:\.\d{1,2})?)/i,
+    /(?:budget|up to|max(?:imum)?(?: of)?)\s*(?:is|of|:)?\s*(?:around|about|approximately)?\s*(?:usd|\$|ngn|₦|naira)?\s*([\d,]+(?:\.\d{1,2})?)/i,
   );
   const lower = text.toLowerCase();
   const region = KNOWN_REGIONS.find((candidate) => lower.includes(candidate.toLowerCase())) ?? null;
@@ -236,7 +236,7 @@ export const parseRequestDraft = async ({
   const proposedNeededBy = overrides.neededBy ?? aiNeededBy ?? heuristics.neededBy;
   const neededBy = proposedNeededBy && isFutureDate(proposedNeededBy) ? proposedNeededBy : null;
   const priority = overrides.priority ?? fields?.priority ?? "balanced";
-  const currency = (overrides.currency ?? fields?.currency ?? "USD").toUpperCase();
+  const currency = (overrides.currency ?? "NGN").toUpperCase();
   const usedFallback = fallbackReasons.length > 0;
 
   return {
