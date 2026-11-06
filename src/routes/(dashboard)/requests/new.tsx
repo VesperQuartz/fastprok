@@ -121,7 +121,7 @@ const NewRequestPage = () => {
                 id="description"
                 value={description}
                 onChange={(event) => setDescription(event.target.value)}
-                placeholder="We need 20 wireless mice for the Finance team in Lagos by 13 November. Budget is around $600."
+                placeholder="We need 20 wireless mice for the Finance team in Lagos by 13 November. Budget is around ₦900,000."
                 className="min-h-32 text-sm"
                 required
               />
@@ -226,7 +226,7 @@ const NewRequestPage = () => {
                   step="0.01"
                   value={budget}
                   onChange={(event) => setBudget(event.target.value)}
-                  placeholder="600"
+                  placeholder="900000"
                 />
               </div>
 

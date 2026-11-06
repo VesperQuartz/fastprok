@@ -189,7 +189,7 @@ const VendorRequestPage = () => {
                     step="0.01"
                     value={unitPrice}
                     onChange={(event) => setUnitPrice(event.target.value)}
-                    placeholder="55.00"
+                    placeholder="45000"
                     disabled={!isOpen}
                     required
                   />
