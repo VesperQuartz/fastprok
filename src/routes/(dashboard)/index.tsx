@@ -1,25 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { authMiddleware } from "@/middleware/auth";
-import { useQuery } from "@tanstack/react-query";
-import { orpc } from "@/lib/orpc/client";
 
 const App = () => {
-  const todos = useQuery(orpc.listTodos.queryOptions({}));
   return (
-    <div className="p-4 text-center ">
-      <p className="font-bold text-xl m-1">Todos</p>
-      <br />
-      <pre>{JSON.stringify(todos.data, null, 4)}</pre>
-    </div>
+    <main className="flex min-h-svh items-center justify-center p-8">
+      <div className="max-w-md text-center">
+        <h1 className="font-semibold text-2xl">Procurement Agent</h1>
+        <p className="mt-2 text-muted-foreground">
+          Requests, vendor quotes, and agent decisions in one place.
+        </p>
+      </div>
+    </main>
   );
 };
 
 export const Route = createFileRoute("/(dashboard)/")({
   component: App,
-  loader: async ({ context }) => {
-    await context.queryClient.query(orpc.listTodos.queryOptions());
-  },
-  server: {
-    middleware: [authMiddleware],
-  },
 });

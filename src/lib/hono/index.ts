@@ -4,6 +4,8 @@ import { requestId } from "hono/request-id";
 import { secureHeaders } from "hono/secure-headers";
 import { pinoLogger } from "hono-pino";
 import pino from "pino";
+import { sql } from "drizzle-orm";
+import { db } from "@/lib/db";
 import { factory } from "./factory";
 
 const app = factory.createApp().basePath("/api");
@@ -27,6 +29,20 @@ app.use(
 );
 
 app.use(prettyJSON());
+
+app.get("/health", async (c) => {
+  try {
+    await db.execute(sql`select 1`);
+
+    return c.json({
+      status: "ok",
+      database: "up",
+      at: new Date().toISOString(),
+    });
+  } catch {
+    return c.json({ status: "error", database: "down" }, 503);
+  }
+});
 
 app.get("/hono", (c) => {
   const logger = c.get("logger");

@@ -1,4 +1,3 @@
-import { useForm } from "@tanstack/react-form";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { z } from "zod";
@@ -11,15 +10,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
 
 const signUpSchema = z
   .object({
-    name: z.string().min(1, "Name is required"),
+    name: z.string().trim().min(1, "Name is required"),
     email: z.email("Enter a valid email address"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string().min(1, "Confirm your password"),
   })
   .refine((values) => values.password === values.confirmPassword, {
@@ -27,184 +26,155 @@ const signUpSchema = z
     message: "Passwords do not match",
   });
 
+type SignUpValues = z.infer<typeof signUpSchema>;
+
+const initialValues: SignUpValues = {
+  name: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+};
+
 export const SignUp = () => {
   const navigate = useNavigate();
+  const [values, setValues] = useState(initialValues);
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof SignUpValues, string>>>({});
   const [formError, setFormError] = useState<string | null>(null);
-  const [registeredEmail, setRegisteredEmail] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const form = useForm({
-    defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-    },
-    validators: {
-      onSubmit: signUpSchema,
-    },
-    onSubmit: async ({ value }) => {
-      setFormError(null);
+  const update = (key: keyof SignUpValues, value: string) => {
+    setValues((current) => ({ ...current, [key]: value }));
+    setFieldErrors((current) => ({ ...current, [key]: undefined }));
+  };
 
-      try {
-        const { error } = await authClient.signUp.email({
-          name: value.name,
-          email: value.email,
-          password: value.password,
-        });
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const parsed = signUpSchema.safeParse(values);
 
-        if (error) {
-          setFormError(error.message ?? "Unable to create your account.");
-          return;
+    if (!parsed.success) {
+      const nextErrors: Partial<Record<keyof SignUpValues, string>> = {};
+
+      for (const issue of parsed.error.issues) {
+        const key = issue.path[0];
+
+        if (typeof key === "string" && key in values && !nextErrors[key as keyof SignUpValues]) {
+          nextErrors[key as keyof SignUpValues] = issue.message;
         }
-      } catch {
-        setFormError("Could not reach the server. Please try again.");
-        return;
       }
 
-      setRegisteredEmail(value.email);
-    },
-  });
+      setFieldErrors(nextErrors);
+      return;
+    }
 
-  if (registeredEmail) {
-    return (
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>Verify your email</CardTitle>
-          <CardDescription>
-            We sent a verification link to {registeredEmail}. Open it to activate your account, then
-            sign in.
-          </CardDescription>
-        </CardHeader>
-        <CardFooter className="flex-col gap-3">
-          <Button
-            type="button"
-            variant="outline"
-            className="w-full"
-            onClick={() => navigate({ to: "/login" })}
-          >
-            Back to sign in
-          </Button>
-        </CardFooter>
-      </Card>
-    );
-  }
+    setFieldErrors({});
+    setFormError(null);
+    setIsSubmitting(true);
+
+    try {
+      const { error } = await authClient.signUp.email({
+        name: parsed.data.name,
+        email: parsed.data.email,
+        password: parsed.data.password,
+      });
+
+      if (error) {
+        setFormError(error.message ?? "Unable to create your account.");
+        return;
+      }
+    } catch {
+      setFormError("Could not reach the server. Please try again.");
+      return;
+    } finally {
+      setIsSubmitting(false);
+    }
+
+    await navigate({ to: "/" });
+  };
 
   return (
     <Card className="w-full max-w-sm">
       <CardHeader>
         <CardTitle>Create an account</CardTitle>
-        <CardDescription>
-          Enter your details to get started. We&apos;ll email you a link to verify your account.
-        </CardDescription>
+        <CardDescription>Start running procurement requests with the agent.</CardDescription>
       </CardHeader>
       <CardContent>
-        <form
-          id="sign-up-form"
-          onSubmit={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            void form.handleSubmit();
-          }}
-        >
+        <form id="sign-up-form" onSubmit={onSubmit}>
           <FieldGroup>
-            {formError ? <FieldError>{formError}</FieldError> : null}
+            {formError ? <p className="text-sm text-red-600">{formError}</p> : null}
 
-            <form.Field name="name">
-              {(field) => (
-                <Field>
-                  <FieldLabel htmlFor={field.name}>Name</FieldLabel>
-                  <Input
-                    id={field.name}
-                    name={field.name}
-                    type="text"
-                    autoComplete="name"
-                    placeholder="Ada Lovelace"
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    aria-invalid={field.state.meta.errors.length > 0}
-                  />
-                  <FieldError errors={field.state.meta.errors} />
-                </Field>
-              )}
-            </form.Field>
+            <Field>
+              <FieldLabel htmlFor="name">Name</FieldLabel>
+              <Input
+                id="name"
+                name="name"
+                type="text"
+                autoComplete="name"
+                placeholder="Ada Lovelace"
+                value={values.name}
+                onChange={(event) => update("name", event.target.value)}
+                aria-invalid={Boolean(fieldErrors.name)}
+              />
+              {fieldErrors.name ? <p className="text-xs text-red-600">{fieldErrors.name}</p> : null}
+            </Field>
 
-            <form.Field name="email">
-              {(field) => (
-                <Field>
-                  <FieldLabel htmlFor={field.name}>Email</FieldLabel>
-                  <Input
-                    id={field.name}
-                    name={field.name}
-                    type="email"
-                    autoComplete="email"
-                    placeholder="you@example.com"
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    aria-invalid={field.state.meta.errors.length > 0}
-                  />
-                  <FieldError errors={field.state.meta.errors} />
-                </Field>
-              )}
-            </form.Field>
+            <Field>
+              <FieldLabel htmlFor="email">Email</FieldLabel>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                placeholder="you@example.com"
+                value={values.email}
+                onChange={(event) => update("email", event.target.value)}
+                aria-invalid={Boolean(fieldErrors.email)}
+              />
+              {fieldErrors.email ? (
+                <p className="text-xs text-red-600">{fieldErrors.email}</p>
+              ) : null}
+            </Field>
 
-            <form.Field name="password">
-              {(field) => (
-                <Field>
-                  <FieldLabel htmlFor={field.name}>Password</FieldLabel>
-                  <Input
-                    id={field.name}
-                    name={field.name}
-                    type="password"
-                    autoComplete="new-password"
-                    placeholder="••••••••"
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    aria-invalid={field.state.meta.errors.length > 0}
-                  />
-                  <FieldDescription>At least 6 characters.</FieldDescription>
-                  <FieldError errors={field.state.meta.errors} />
-                </Field>
-              )}
-            </form.Field>
+            <Field>
+              <FieldLabel htmlFor="password">Password</FieldLabel>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="new-password"
+                placeholder="••••••••"
+                value={values.password}
+                onChange={(event) => update("password", event.target.value)}
+                aria-invalid={Boolean(fieldErrors.password)}
+              />
+              <FieldDescription>At least 8 characters.</FieldDescription>
+              {fieldErrors.password ? (
+                <p className="text-xs text-red-600">{fieldErrors.password}</p>
+              ) : null}
+            </Field>
 
-            <form.Field name="confirmPassword">
-              {(field) => (
-                <Field>
-                  <FieldLabel htmlFor={field.name}>Confirm password</FieldLabel>
-                  <Input
-                    id={field.name}
-                    name={field.name}
-                    type="password"
-                    autoComplete="new-password"
-                    placeholder="••••••••"
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    aria-invalid={field.state.meta.errors.length > 0}
-                  />
-                  <FieldError errors={field.state.meta.errors} />
-                </Field>
-              )}
-            </form.Field>
+            <Field>
+              <FieldLabel htmlFor="confirmPassword">Confirm password</FieldLabel>
+              <Input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                autoComplete="new-password"
+                placeholder="••••••••"
+                value={values.confirmPassword}
+                onChange={(event) => update("confirmPassword", event.target.value)}
+                aria-invalid={Boolean(fieldErrors.confirmPassword)}
+              />
+              {fieldErrors.confirmPassword ? (
+                <p className="text-xs text-red-600">{fieldErrors.confirmPassword}</p>
+              ) : null}
+            </Field>
           </FieldGroup>
         </form>
       </CardContent>
       <CardFooter className="flex-col gap-3">
-        <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
-          {([canSubmit, isSubmitting]) => (
-            <Button
-              type="submit"
-              form="sign-up-form"
-              className="w-full"
-              disabled={!canSubmit || isSubmitting}
-            >
-              {isSubmitting ? "Creating account..." : "Create account"}
-            </Button>
-          )}
-        </form.Subscribe>
+        <Button type="submit" form="sign-up-form" className="w-full" disabled={isSubmitting}>
+          {isSubmitting ? "Creating account..." : "Create account"}
+        </Button>
         <p className="text-center text-sm text-muted-foreground">
           Already have an account?{" "}
           <Button
