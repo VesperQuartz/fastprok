@@ -5,8 +5,8 @@ import type { ReactNode } from "react";
  */
 export const AuthLayout = ({ children }: { children: ReactNode }) => {
   return (
-    <div className="flex min-h-svh w-full items-center justify-center bg-background p-4">
-      <div className="w-full max-w-sm">{children}</div>
+    <div className="flex min-h-svh w-full items-center justify-center bg-[#f6f7f9] p-4">
+      <div className="w-full max-w-md py-8">{children}</div>
     </div>
   );
 };

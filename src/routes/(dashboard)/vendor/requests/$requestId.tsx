@@ -1,16 +1,10 @@
 import { HugeiconsIcon } from "@hugeicons/react";
-import {
-  ArrowLeft01Icon,
-  Calendar03Icon,
-  CheckmarkCircle02Icon,
-  Clock01Icon,
-  Store01Icon,
-} from "@hugeicons/core-free-icons";
+import { ArrowLeft01Icon, CheckmarkCircle02Icon } from "@hugeicons/core-free-icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { formatDate, formatDateTime, formatMoney, timeLeft } from "@/components/procurement/format";
+import { formatDate, formatDateTime, formatMoney } from "@/components/procurement/format";
 import { StatusBadge } from "@/components/procurement/status-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,23 +14,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { orpc } from "@/lib/orpc/client";
 
-const Meta = ({
-  icon,
-  label,
-  value,
-}: {
-  icon: typeof Clock01Icon;
-  label: string;
-  value: string;
-}) => (
-  <div className="flex items-start gap-2.5">
-    <span className="mt-0.5 flex size-7 items-center justify-center rounded-md bg-muted text-muted-foreground">
-      <HugeiconsIcon icon={icon} strokeWidth={1.8} className="size-3.5" />
-    </span>
-    <div>
-      <p className="text-muted-foreground text-[11px] uppercase tracking-wide">{label}</p>
-      <p className="font-medium text-sm">{value}</p>
-    </div>
+const Meta = ({ label, value }: { label: string; value: string }) => (
+  <div>
+    <dt className="text-muted-foreground text-xs">{label}</dt>
+    <dd className="mt-1 font-medium text-sm">{value}</dd>
   </div>
 );
 
@@ -149,22 +130,20 @@ const VendorRequestPage = () => {
           <StatusBadge status={request.status} />
           {quote ? <StatusBadge status={quote.status} /> : null}
         </div>
-        <p className="mt-1 text-muted-foreground text-sm">
-          {request.quantity} {request.unit} · {request.deliveryRegion} · needed{" "}
-          {formatDate(request.neededBy)}
+        <p className="mt-1 text-muted-foreground text-sm text-pretty">
+          {request.quantity} {request.unit} for {request.deliveryRegion}. Needed by{" "}
+          {formatDate(request.neededBy)}.
         </p>
       </div>
 
       <Card className="border-border/70 shadow-none">
-        <CardContent className="grid gap-4 p-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Meta icon={Store01Icon} label="Quantity" value={`${request.quantity} ${request.unit}`} />
-          <Meta icon={Store01Icon} label="Deliver to" value={request.deliveryRegion} />
-          <Meta icon={Calendar03Icon} label="Needed by" value={formatDate(request.neededBy)} />
-          <Meta
-            icon={Clock01Icon}
-            label="Quotes close"
-            value={`${formatDateTime(request.deadlineAt)} · ${timeLeft(request.deadlineAt)}`}
-          />
+        <CardContent className="p-5">
+          <dl className="grid gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-4">
+            <Meta label="Quantity" value={`${request.quantity} ${request.unit}`} />
+            <Meta label="Deliver to" value={request.deliveryRegion} />
+            <Meta label="Needed by" value={formatDate(request.neededBy)} />
+            <Meta label="Quotes close" value={formatDateTime(request.deadlineAt)} />
+          </dl>
         </CardContent>
       </Card>
 
@@ -192,10 +171,11 @@ const VendorRequestPage = () => {
 
       <div className="grid gap-5 lg:grid-cols-[1fr_300px]">
         <Card className="border-border/70 shadow-none">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm">
-              {quote ? `Your quote · version ${quote.version}` : "Submit a quote"}
-            </CardTitle>
+          <CardHeader className="flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm">{quote ? "Your quote" : "Submit a quote"}</CardTitle>
+            {quote ? (
+              <span className="text-muted-foreground text-xs">Version {quote.version}</span>
+            ) : null}
           </CardHeader>
           <CardContent>
             <form onSubmit={onSubmit} className="space-y-4">
@@ -293,7 +273,7 @@ const VendorRequestPage = () => {
 
         <Card className="h-fit border-border/70 shadow-none">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm">Your quote</CardTitle>
+            <CardTitle className="text-sm">Quote summary</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             {quote ? (

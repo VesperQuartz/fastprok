@@ -59,7 +59,7 @@ export const SignIn = ({ redirectTo }: { redirectTo?: string }) => {
   });
 
   return (
-    <Card className="w-full max-w-sm">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle>Sign in</CardTitle>
         <CardDescription>Enter your email and password to access your account.</CardDescription>

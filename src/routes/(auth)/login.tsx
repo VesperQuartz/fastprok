@@ -1,5 +1,11 @@
 import { HugeiconsIcon } from "@hugeicons/react";
-import { SparklesIcon } from "@hugeicons/core-free-icons";
+import {
+  ArrowRight01Icon,
+  CheckmarkCircle02Icon,
+  SparklesIcon,
+  Store01Icon,
+  UserIcon,
+} from "@hugeicons/core-free-icons";
 import { useNavigate, createFileRoute, redirect } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -8,6 +14,7 @@ import { authServerFn } from "@/actions/auth";
 import { AuthLayout } from "@/components/auth/layout";
 import { SignIn } from "@/components/auth/sign-in";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { authClient } from "@/lib/auth-client";
 
 const DEMO_ACCOUNTS = [
@@ -15,19 +22,22 @@ const DEMO_ACCOUNTS = [
     id: "buyer",
     label: "Requester",
     email: "lilbrown3000+buyer@gmail.com",
-    hint: "creates requests, reviews quotes",
+    hint: "Creates requests and reviews quotes",
+    icon: UserIcon,
   },
   {
     id: "approver",
     label: "Approver",
     email: "lilbrown3000+approver@gmail.com",
-    hint: "can approve a quote",
+    hint: "Makes the final decision",
+    icon: CheckmarkCircle02Icon,
   },
   {
     id: "vendor-d",
     label: "Vendor",
     email: "lilbrown3000+vendor-d@gmail.com",
-    hint: "submits and edits quotes",
+    hint: "Submits and edits quotes",
+    icon: Store01Icon,
   },
 ];
 
@@ -64,30 +74,48 @@ const LoginPage = () => {
         </p>
       </div>
 
-      <SignIn redirectTo={redirectTo} />
-
-      <div className="mt-4 rounded-xl border border-border/70 bg-muted/40 p-3">
-        <p className="font-medium text-xs uppercase tracking-wide text-muted-foreground">
-          Demo accounts
-        </p>
-        <div className="mt-2 grid gap-1.5">
+      <div className="rounded-xl border border-border/70 bg-card p-4">
+        <div>
+          <p className="font-medium text-sm">Try the demo</p>
+          <p className="mt-0.5 text-muted-foreground text-xs">Pick a role. No sign-up needed.</p>
+        </div>
+        <div className="mt-3 grid gap-2">
           {DEMO_ACCOUNTS.map((account) => (
             <Button
               key={account.id}
               variant="outline"
-              size="sm"
-              className="h-auto justify-start bg-white px-2.5 py-1.5"
+              className="h-auto justify-start gap-3 bg-background px-3 py-2.5 text-left"
               onClick={() => void demoSignIn(account)}
               disabled={signingIn !== null}
             >
-              <span className="font-medium">{account.label}</span>
-              <span className="ml-auto text-[11px] text-muted-foreground">
-                {signingIn === account.id ? "signing in…" : account.hint}
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+                <HugeiconsIcon icon={account.icon} strokeWidth={1.8} className="size-4" />
               </span>
+              <span className="min-w-0 flex-1">
+                <span className="block font-medium text-sm">{account.label}</span>
+                <span className="block truncate text-muted-foreground text-xs">{account.hint}</span>
+              </span>
+              {signingIn === account.id ? (
+                <span className="text-muted-foreground text-xs">Signing in…</span>
+              ) : (
+                <HugeiconsIcon
+                  icon={ArrowRight01Icon}
+                  strokeWidth={2}
+                  className="size-4 text-muted-foreground"
+                />
+              )}
             </Button>
           ))}
         </div>
       </div>
+
+      <div className="my-4 flex items-center gap-3">
+        <Separator className="flex-1" />
+        <span className="text-muted-foreground text-xs">or sign in with email</span>
+        <Separator className="flex-1" />
+      </div>
+
+      <SignIn redirectTo={redirectTo} />
     </AuthLayout>
   );
 };

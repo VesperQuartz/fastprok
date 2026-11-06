@@ -1,43 +1,282 @@
 import { HugeiconsIcon } from "@hugeicons/react";
-import {
-  ArrowRight01Icon,
-  CheckmarkCircle02Icon,
-  Clock01Icon,
-  PackageIcon,
-  PlusSignIcon,
-} from "@hugeicons/core-free-icons";
+import { ArrowRight01Icon, PackageIcon, PlusSignIcon } from "@hugeicons/core-free-icons";
 import { useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
+import { StatCard } from "@/components/procurement/stat-card";
 import { StatusBadge } from "@/components/procurement/status-badge";
-import { formatDate, formatMoney, timeLeft } from "@/components/procurement/format";
+import { formatDate, formatDateTime, formatMoney, timeLeft } from "@/components/procurement/format";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { orpc } from "@/lib/orpc/client";
 
-const Stat = ({
-  label,
-  value,
-  hint,
-  icon,
-}: {
-  label: string;
-  value: number | string;
-  hint: string;
-  icon: typeof PackageIcon;
-}) => (
-  <Card className="border-border/70 shadow-none">
-    <CardContent className="flex items-start justify-between gap-3 p-4">
-      <div>
-        <p className="text-muted-foreground text-xs uppercase tracking-wide">{label}</p>
-        <p className="mt-1 font-semibold text-2xl tabular-nums">{value}</p>
-        <p className="mt-0.5 text-muted-foreground text-xs">{hint}</p>
-      </div>
-      <span className="flex size-9 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-        <HugeiconsIcon icon={icon} strokeWidth={1.8} className="size-4" />
-      </span>
-    </CardContent>
-  </Card>
+type RequestRow = {
+  id: string;
+  title: string;
+  status: string;
+  quantity: number;
+  unit: string;
+  deliveryRegion: string;
+  neededBy: string;
+  deadlineAt: string;
+  budgetCents: number | null;
+  currency: string;
+  createdAt: string;
+};
+
+type VendorRow = {
+  requestId: string;
+  title: string;
+  status: string;
+  quantity: number;
+  unit: string;
+  deliveryRegion: string;
+  neededBy: string;
+  deadlineAt: string;
+  invitationStatus: string;
+  quoteStatus: string | null;
+  quoteTotalCents: number | null;
+};
+
+const Summary = ({ requests }: { requests: RequestRow[] }) => {
+  const open = requests.filter(
+    (request) => request.status === "quoting" || request.status === "awaiting_approval",
+  ).length;
+  const awaiting = requests.filter((request) => request.status === "awaiting_approval").length;
+  const approved = requests.filter((request) => request.status === "approved").length;
+
+  return (
+    <section className="grid overflow-hidden rounded-xl border border-border/70 bg-card sm:grid-cols-[1.25fr_1fr_1fr]">
+      <StatCard featured label="Open requests" value={open} hint="In progress" />
+      <StatCard
+        label="Awaiting approval"
+        value={awaiting}
+        hint="Ready to review"
+        className="border-t border-border/70 sm:border-t-0 sm:border-l"
+      />
+      <StatCard
+        label="Approved"
+        value={approved}
+        hint="Closed"
+        className="border-t border-border/70 sm:border-t-0 sm:border-l"
+      />
+    </section>
+  );
+};
+
+const RequestTable = ({ requests }: { requests: RequestRow[] }) => (
+  <div className="hidden overflow-hidden rounded-xl border border-border/70 bg-card md:block">
+    <Table>
+      <TableHeader>
+        <TableRow className="bg-muted/40 hover:bg-muted/40">
+          <TableHead className="h-10 px-4 text-muted-foreground">Request</TableHead>
+          <TableHead className="h-10 px-4 text-muted-foreground">Status</TableHead>
+          <TableHead className="h-10 px-4 text-muted-foreground">Needed by</TableHead>
+          <TableHead className="h-10 px-4 text-muted-foreground">Quote deadline</TableHead>
+          <TableHead className="h-10 px-4 text-right text-muted-foreground">Budget</TableHead>
+          <TableHead className="h-10 w-10 px-4" aria-label="Open request" />
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {requests.map((request) => (
+          <TableRow key={request.id} className="relative has-[a:focus-visible]:bg-muted/40">
+            <TableCell className="whitespace-normal px-4 py-3">
+              <Link
+                to="/requests/$requestId"
+                params={{ requestId: request.id }}
+                className="font-medium text-foreground after:absolute after:inset-0 focus-visible:underline focus-visible:outline-none"
+              >
+                {request.title}
+              </Link>
+              <p className="mt-0.5 text-muted-foreground text-xs">
+                {request.quantity} {request.unit}, {request.deliveryRegion}
+              </p>
+            </TableCell>
+            <TableCell className="px-4 py-3">
+              <StatusBadge status={request.status} />
+            </TableCell>
+            <TableCell className="px-4 py-3 text-muted-foreground">
+              {formatDate(request.neededBy)}
+            </TableCell>
+            <TableCell className="px-4 py-3">
+              {request.status === "quoting" ? (
+                <>
+                  <span className="font-medium text-sm">{timeLeft(request.deadlineAt)}</span>
+                  <span className="mt-0.5 block text-muted-foreground text-xs">
+                    {formatDateTime(request.deadlineAt)}
+                  </span>
+                </>
+              ) : (
+                <span className="text-muted-foreground">Closed</span>
+              )}
+            </TableCell>
+            <TableCell className="px-4 py-3 text-right tabular-nums">
+              {request.budgetCents === null ? (
+                <span className="text-muted-foreground">—</span>
+              ) : (
+                formatMoney(request.budgetCents, request.currency)
+              )}
+            </TableCell>
+            <TableCell className="px-4 py-3">
+              <HugeiconsIcon
+                icon={ArrowRight01Icon}
+                strokeWidth={2}
+                className="size-4 text-muted-foreground"
+              />
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  </div>
+);
+
+const RequestCards = ({ requests }: { requests: RequestRow[] }) => (
+  <div className="space-y-2 md:hidden">
+    {requests.map((request) => (
+      <Link
+        key={request.id}
+        to="/requests/$requestId"
+        params={{ requestId: request.id }}
+        className="block rounded-xl border border-border/70 bg-card p-4 transition-colors hover:bg-muted/40"
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="truncate font-medium">{request.title}</p>
+            <p className="mt-0.5 text-muted-foreground text-xs">
+              {request.quantity} {request.unit}, {request.deliveryRegion}
+            </p>
+          </div>
+          <StatusBadge status={request.status} />
+        </div>
+        <div className="mt-3 flex items-center justify-between gap-3">
+          <span
+            className={
+              request.status === "quoting" ? "font-medium text-sm" : "text-muted-foreground text-sm"
+            }
+          >
+            {request.status === "quoting" ? timeLeft(request.deadlineAt) : "Quotes closed"}
+          </span>
+          <span className="text-muted-foreground text-xs">
+            Needed {formatDate(request.neededBy)}
+          </span>
+        </div>
+      </Link>
+    ))}
+  </div>
+);
+
+const VendorTable = ({ items }: { items: VendorRow[] }) => (
+  <div className="hidden overflow-hidden rounded-xl border border-border/70 bg-card md:block">
+    <Table>
+      <TableHeader>
+        <TableRow className="bg-muted/40 hover:bg-muted/40">
+          <TableHead className="h-10 px-4 text-muted-foreground">Invitation</TableHead>
+          <TableHead className="h-10 px-4 text-muted-foreground">Your quote</TableHead>
+          <TableHead className="h-10 px-4 text-muted-foreground">Status</TableHead>
+          <TableHead className="h-10 px-4 text-muted-foreground">Deadline</TableHead>
+          <TableHead className="h-10 w-10 px-4" aria-label="Open invitation" />
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {items.map((item) => (
+          <TableRow key={item.requestId} className="relative has-[a:focus-visible]:bg-muted/40">
+            <TableCell className="whitespace-normal px-4 py-3">
+              <Link
+                to="/vendor/requests/$requestId"
+                params={{ requestId: item.requestId }}
+                className="font-medium text-foreground after:absolute after:inset-0 focus-visible:underline focus-visible:outline-none"
+              >
+                {item.title}
+              </Link>
+              <p className="mt-0.5 text-muted-foreground text-xs">
+                {item.quantity} {item.unit}, {item.deliveryRegion}
+              </p>
+            </TableCell>
+            <TableCell className="px-4 py-3 tabular-nums">
+              {item.quoteTotalCents === null ? (
+                <span className="text-muted-foreground">Not quoted</span>
+              ) : (
+                formatMoney(item.quoteTotalCents)
+              )}
+            </TableCell>
+            <TableCell className="px-4 py-3">
+              <StatusBadge status={item.quoteStatus ?? item.invitationStatus} />
+            </TableCell>
+            <TableCell className="px-4 py-3">
+              {item.status === "quoting" ? (
+                <>
+                  <span className="font-medium text-sm">{timeLeft(item.deadlineAt)}</span>
+                  <span className="mt-0.5 block text-muted-foreground text-xs">
+                    {formatDateTime(item.deadlineAt)}
+                  </span>
+                </>
+              ) : (
+                <span className="text-muted-foreground">Closed</span>
+              )}
+            </TableCell>
+            <TableCell className="px-4 py-3">
+              <HugeiconsIcon
+                icon={ArrowRight01Icon}
+                strokeWidth={2}
+                className="size-4 text-muted-foreground"
+              />
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  </div>
+);
+
+const VendorCards = ({ items }: { items: VendorRow[] }) => (
+  <div className="space-y-2 md:hidden">
+    {items.map((item) => (
+      <Link
+        key={item.requestId}
+        to="/vendor/requests/$requestId"
+        params={{ requestId: item.requestId }}
+        className="block rounded-xl border border-border/70 bg-card p-4 transition-colors hover:bg-muted/40"
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="truncate font-medium">{item.title}</p>
+            <p className="mt-0.5 text-muted-foreground text-xs">
+              {item.quantity} {item.unit}, {item.deliveryRegion}
+            </p>
+          </div>
+          <StatusBadge status={item.quoteStatus ?? item.invitationStatus} />
+        </div>
+        <div className="mt-3 flex items-center justify-between gap-3">
+          <span className="text-sm">
+            {item.quoteTotalCents === null ? (
+              <span className="text-muted-foreground">Not quoted</span>
+            ) : (
+              <span className="font-medium tabular-nums">{formatMoney(item.quoteTotalCents)}</span>
+            )}
+          </span>
+          <span className="text-muted-foreground text-xs">
+            {item.status === "quoting" ? timeLeft(item.deadlineAt) : "Quotes closed"}
+          </span>
+        </div>
+      </Link>
+    ))}
+  </div>
 );
 
 const RequestList = () => {
@@ -61,91 +300,31 @@ const RequestList = () => {
 
   if (requests.length === 0) {
     return (
-      <Card className="border-dashed border-border/80 shadow-none">
-        <CardContent className="flex flex-col items-center gap-3 px-6 py-14 text-center">
-          <span className="flex size-11 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-            <HugeiconsIcon icon={PackageIcon} strokeWidth={1.8} className="size-5" />
-          </span>
-          <div>
-            <p className="font-medium">No requests yet</p>
-            <p className="mt-1 text-muted-foreground text-sm">
-              Describe what you need and the agent will find vendors.
-            </p>
-          </div>
+      <Empty className="border bg-card">
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <HugeiconsIcon icon={PackageIcon} strokeWidth={1.8} />
+          </EmptyMedia>
+          <EmptyTitle>No requests yet</EmptyTitle>
+          <EmptyDescription>
+            Describe what you need and the agent will find vendors, collect quotes, and rank them.
+          </EmptyDescription>
+        </EmptyHeader>
+        <EmptyContent>
           <Button render={<Link to="/requests/new" />}>
             <HugeiconsIcon icon={PlusSignIcon} strokeWidth={2} />
             Create a request
           </Button>
-        </CardContent>
-      </Card>
+        </EmptyContent>
+      </Empty>
     );
   }
 
-  const active = requests.filter(
-    (request) => request.status === "quoting" || request.status === "awaiting_approval",
-  ).length;
-  const awaiting = requests.filter((request) => request.status === "awaiting_approval").length;
-  const approved = requests.filter((request) => request.status === "approved").length;
-
   return (
     <div className="space-y-5">
-      <div className="grid gap-3 sm:grid-cols-3">
-        <Stat label="Active" value={active} hint="being sourced right now" icon={PackageIcon} />
-        <Stat
-          label="Awaiting approval"
-          value={awaiting}
-          hint="agent has ranked quotes"
-          icon={Clock01Icon}
-        />
-        <Stat
-          label="Approved"
-          value={approved}
-          hint="decisions closed"
-          icon={CheckmarkCircle02Icon}
-        />
-      </div>
-
-      <div className="space-y-2">
-        {requests.map((request) => (
-          <Link
-            key={request.id}
-            to="/requests/$requestId"
-            params={{ requestId: request.id }}
-            className="group block"
-          >
-            <Card className="border-border/70 shadow-none transition-shadow group-hover:shadow-sm">
-              <CardContent className="flex flex-wrap items-center gap-x-5 gap-y-2 p-4">
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="truncate font-medium">{request.title}</p>
-                    <StatusBadge status={request.status} />
-                  </div>
-                  <p className="mt-1 text-muted-foreground text-sm">
-                    {request.quantity} {request.unit} · {request.deliveryRegion} · needed{" "}
-                    {formatDate(request.neededBy)}
-                    {request.budgetCents !== null
-                      ? ` · budget ${formatMoney(request.budgetCents, request.currency)}`
-                      : ""}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-muted-foreground text-xs">
-                    {request.status === "quoting" ? timeLeft(request.deadlineAt) : "quotes closed"}
-                  </p>
-                  <p className="text-muted-foreground text-xs">
-                    {formatDate(request.createdAt.slice(0, 10))}
-                  </p>
-                </div>
-                <HugeiconsIcon
-                  icon={ArrowRight01Icon}
-                  strokeWidth={2}
-                  className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5"
-                />
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
-      </div>
+      <Summary requests={requests} />
+      <RequestTable requests={requests} />
+      <RequestCards requests={requests} />
     </div>
   );
 };
@@ -171,61 +350,24 @@ const VendorInbox = () => {
 
   if (items.length === 0) {
     return (
-      <Card className="border-dashed border-border/80 shadow-none">
-        <CardContent className="flex flex-col items-center gap-3 px-6 py-14 text-center">
-          <span className="flex size-11 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-            <HugeiconsIcon icon={PackageIcon} strokeWidth={1.8} className="size-5" />
-          </span>
-          <div>
-            <p className="font-medium">No invitations yet</p>
-            <p className="mt-1 text-muted-foreground text-sm">
-              New quote requests will appear here.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+      <Empty className="border bg-card">
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <HugeiconsIcon icon={PackageIcon} strokeWidth={1.8} />
+          </EmptyMedia>
+          <EmptyTitle>No invitations yet</EmptyTitle>
+          <EmptyDescription>
+            When a buyer invites you to quote, the request will appear here and in your email.
+          </EmptyDescription>
+        </EmptyHeader>
+      </Empty>
     );
   }
 
   return (
-    <div className="space-y-2">
-      {items.map((item) => (
-        <Link
-          key={item.requestId}
-          to="/vendor/requests/$requestId"
-          params={{ requestId: item.requestId }}
-          className="group block"
-        >
-          <Card className="border-border/70 shadow-none transition-shadow group-hover:shadow-sm">
-            <CardContent className="flex flex-wrap items-center gap-x-5 gap-y-2 p-4">
-              <div className="min-w-0 flex-1">
-                <div className="flex flex-wrap items-center gap-2">
-                  <p className="truncate font-medium">{item.title}</p>
-                  <StatusBadge status={item.quoteStatus ?? item.invitationStatus} />
-                  <StatusBadge status={item.status} className="text-[11px]" />
-                </div>
-                <p className="mt-1 text-muted-foreground text-sm">
-                  {item.quantity} {item.unit} · {item.deliveryRegion} · needed{" "}
-                  {formatDate(item.neededBy)}
-                  {item.quoteTotalCents !== null
-                    ? ` · your quote ${formatMoney(item.quoteTotalCents)}`
-                    : ""}
-                </p>
-              </div>
-              <div className="text-right">
-                <p className="text-muted-foreground text-xs">
-                  {item.status === "quoting" ? timeLeft(item.deadlineAt) : "quotes closed"}
-                </p>
-              </div>
-              <HugeiconsIcon
-                icon={ArrowRight01Icon}
-                strokeWidth={2}
-                className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5"
-              />
-            </CardContent>
-          </Card>
-        </Link>
-      ))}
+    <div className="space-y-5">
+      <VendorTable items={items} />
+      <VendorCards items={items} />
     </div>
   );
 };
@@ -237,17 +379,14 @@ const Home = () => {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="font-medium text-blue-600 text-xs uppercase tracking-[0.14em]">
-            {isVendor ? "Vendor workspace" : "Agent workspace"}
-          </p>
-          <h1 className="mt-1 font-semibold text-2xl tracking-tight sm:text-3xl">
+        <div className="min-w-0">
+          <h1 className="font-semibold text-2xl tracking-tight text-balance sm:text-3xl">
             {isVendor ? "Quote invitations" : "Procurement requests"}
           </h1>
-          <p className="mt-1 max-w-xl text-muted-foreground text-sm">
+          <p className="mt-1 max-w-2xl text-muted-foreground text-sm text-pretty">
             {isVendor
-              ? "Answer requests inside the app before the deadline. The agent handles the chasing."
-              : "Describe a need in plain language. The agent structures it, finds vendors, and ranks every quote."}
+              ? "Submit your price before the deadline. The agent handles the rest."
+              : "Describe a need. The agent finds vendors, chases quotes, and ranks them."}
           </p>
         </div>
         {!isVendor && me.data ? (

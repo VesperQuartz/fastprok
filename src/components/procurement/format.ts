@@ -58,6 +58,23 @@ const ACTION_LABELS: Record<string, string> = {
 
 export const actionLabel = (action: string) => ACTION_LABELS[action] ?? action;
 
+const CATEGORY_LABELS: Record<string, string> = {
+  "computer-peripherals": "Computer peripherals",
+  "office-furniture": "Office furniture",
+  "office-supplies": "Stationery and office supplies",
+};
+
+export const categoryLabel = (category: string) => CATEGORY_LABELS[category] ?? category;
+
+const PRIORITY_LABELS: Record<string, string> = {
+  balanced: "Balanced",
+  cost: "Lowest price",
+  speed: "Fastest delivery",
+  reliability: "Most reliable",
+};
+
+export const priorityLabel = (priority: string) => PRIORITY_LABELS[priority] ?? priority;
+
 const text = (value: unknown) => (typeof value === "string" ? value : null);
 const count = (value: unknown) => (typeof value === "number" ? value : null);
 
@@ -70,14 +87,14 @@ export const describeAction = (action: string, detail: Record<string, unknown> |
     const vendor = text(detail.vendorName);
     const reminderCount = count(detail.reminderCount);
 
-    return vendor ? `${vendor}${reminderCount ? ` · reminder ${reminderCount}` : ""}` : null;
+    return vendor ? `${vendor}${reminderCount ? `, reminder ${reminderCount}` : ""}` : null;
   }
 
   if (action === "quote.submitted" || action === "quote.updated") {
     const vendor = text(detail.vendorName);
     const total = count(detail.totalPriceCents);
 
-    return [vendor, total !== null ? formatMoney(total) : null].filter(Boolean).join(" · ");
+    return [vendor, total !== null ? formatMoney(total) : null].filter(Boolean).join(", ");
   }
 
   if (action === "vendors.widened") {
@@ -89,7 +106,7 @@ export const describeAction = (action: string, detail: Record<string, unknown> |
       deadline ? `deadline ${formatDateTime(deadline)}` : null,
     ]
       .filter(Boolean)
-      .join(" · ");
+      .join(", ");
   }
 
   if (action === "quotes.ranked") {
@@ -97,7 +114,7 @@ export const describeAction = (action: string, detail: Record<string, unknown> |
     const valid = count(detail.validQuoteCount);
 
     return quoteCount !== null
-      ? `${quoteCount} quote${quoteCount === 1 ? "" : "s"} · ${valid ?? 0} met every requirement`
+      ? `${quoteCount} quote${quoteCount === 1 ? "" : "s"}, ${valid ?? 0} met every requirement`
       : null;
   }
 
@@ -122,7 +139,7 @@ export const describeAction = (action: string, detail: Record<string, unknown> |
     const vendor = text(detail.vendorName);
     const note = text(detail.note);
 
-    return [vendor, note].filter(Boolean).join(" · ");
+    return [vendor, note].filter(Boolean).join(", ");
   }
 
   return null;

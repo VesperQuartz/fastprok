@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import type { CategoryId } from "@/domain/categories";
 import type { RequestPriority } from "@/repo/schema";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
@@ -24,13 +24,13 @@ const CATEGORY_OPTIONS = [
   { value: "", label: "Let the agent decide" },
   { value: "computer-peripherals", label: "Computer peripherals" },
   { value: "office-furniture", label: "Office furniture" },
-  { value: "office-supplies", label: "Stationery & office supplies" },
+  { value: "office-supplies", label: "Stationery and office supplies" },
 ];
 
 const PRIORITY_OPTIONS = [
   { value: "balanced", label: "Balanced" },
-  { value: "cost", label: "Cheapest" },
-  { value: "speed", label: "Fastest" },
+  { value: "cost", label: "Lowest price" },
+  { value: "speed", label: "Fastest delivery" },
   { value: "reliability", label: "Most reliable" },
 ];
 
@@ -104,13 +104,11 @@ const NewRequestPage = () => {
           <HugeiconsIcon icon={ArrowLeft01Icon} strokeWidth={2} />
           Back to requests
         </Button>
-        <p className="font-medium text-blue-600 text-xs uppercase tracking-[0.14em]">New request</p>
-        <h1 className="mt-1 font-semibold text-2xl tracking-tight sm:text-3xl">
-          What do you need to buy?
+        <h1 className="font-semibold text-2xl tracking-tight text-balance sm:text-3xl">
+          What do you need?
         </h1>
-        <p className="mt-1 max-w-2xl text-muted-foreground text-sm">
-          Write it like you would to a colleague. Fill in any fields you already know; the agent
-          extracts the rest and follows up on missing details.
+        <p className="mt-1 max-w-2xl text-muted-foreground text-sm text-pretty">
+          Describe it in plain language. The agent fills the gaps.
         </p>
       </div>
 
@@ -118,7 +116,7 @@ const NewRequestPage = () => {
         <Card className="border-border/70 shadow-none">
           <CardContent className="space-y-5 p-5">
             <div className="space-y-2">
-              <Label htmlFor="description">Describe the need</Label>
+              <Label htmlFor="description">Description</Label>
               <Textarea
                 id="description"
                 value={description}
@@ -128,8 +126,13 @@ const NewRequestPage = () => {
                 required
               />
               <p className="text-muted-foreground text-xs">
-                Mention item, quantity, delivery location, and needed-by date if you can.
+                Quantity, location, and needed-by date help.
               </p>
+            </div>
+
+            <div className="border-t pt-5">
+              <h2 className="font-medium text-sm">Details</h2>
+              <p className="mt-0.5 text-muted-foreground text-xs">Optional.</p>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
@@ -231,7 +234,7 @@ const NewRequestPage = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="window">Quote window (minutes)</Label>
+                <Label htmlFor="window">Deadline (minutes)</Label>
                 <Input
                   id="window"
                   type="number"
@@ -239,7 +242,6 @@ const NewRequestPage = () => {
                   value={windowMinutes}
                   onChange={(event) => setWindowMinutes(event.target.value)}
                 />
-                <p className="text-muted-foreground text-xs">Demo mode uses minutes, not days.</p>
               </div>
             </div>
 
@@ -249,35 +251,35 @@ const NewRequestPage = () => {
                 <HugeiconsIcon icon={ArrowRight01Icon} strokeWidth={2} />
               </Button>
               <p className="text-muted-foreground text-xs">
-                Vendors never see your budget. Email replies are not read; vendors quote in the app.
+                Vendors never see your budget. They quote in the app.
               </p>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="h-fit border-border/70 bg-gradient-to-b from-blue-50/70 to-white shadow-none">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-sm">
-              <HugeiconsIcon icon={SparklesIcon} strokeWidth={2} className="size-4 text-blue-600" />
-              What happens next
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Step
-              icon={Robot01Icon}
-              title="The agent reads it"
-              body="Vultr inference turns your text into structured fields and fills gaps with safe defaults."
-            />
-            <Step
-              icon={Search01Icon}
-              title="Vendors are matched"
-              body="Rules filter by category, region, lead time, and past reliability, then send invitations."
-            />
-            <Step
-              icon={SparklesIcon}
-              title="Quotes are ranked"
-              body="Every quote is scored on cost, speed, reliability, and warranty. The agent never approves."
-            />
+        <Card className="h-fit border-border/70 shadow-none">
+          <CardContent className="p-5">
+            <details>
+              <summary className="cursor-pointer font-medium text-sm">How this works</summary>
+              <div className="mt-4 space-y-4">
+                <Step
+                  icon={Robot01Icon}
+                  title="Reads the request"
+                  body="Vultr inference structures it."
+                />
+                <Step
+                  icon={Search01Icon}
+                  title="Finds vendors"
+                  body="Rules match category and region."
+                />
+                <Step
+                  icon={SparklesIcon}
+                  title="Ranks the quotes"
+                  body="Cost, speed, reliability, and warranty."
+                />
+                <p className="border-t pt-3 text-muted-foreground text-xs">An approver decides.</p>
+              </div>
+            </details>
           </CardContent>
         </Card>
       </form>

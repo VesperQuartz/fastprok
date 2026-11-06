@@ -54,7 +54,8 @@ const callVultr = (recommendation: Recommendation) =>
               role: "system",
               content: [
                 "You explain a procurement quote ranking to a busy buyer.",
-                "Return ONLY JSON with keys: summary (one or two sentences), reasons (array of {quoteId, reason}).",
+                "Return ONLY JSON with keys: summary (two sentences at most), reasons (array of {quoteId, reason}).",
+                "Keep every sentence under 25 words. One idea per sentence.",
                 "Use ONLY numbers and facts supplied in the input. Never invent a price, date, rating, or vendor fact.",
                 "Prices are in cents; convert to USD by dividing by 100.",
                 "Mention only the top 3 quotes and give one short line for each flagged quote.",

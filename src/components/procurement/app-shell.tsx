@@ -6,22 +6,43 @@ import {
   SparklesIcon,
 } from "@hugeicons/core-free-icons";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarInset,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 import { authClient } from "@/lib/auth-client";
 import { orpc } from "@/lib/orpc/client";
-
-const navLinkClass =
-  "inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground";
 
 export const AppShell = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
   const me = useQuery(orpc.me.queryOptions());
   const actor = me.data;
+
+  const isVendor = actor?.kind === "vendor";
+  const workspaceName = actor?.organization?.name ?? actor?.vendor?.name ?? "Workspace";
+  const roleLabel = isVendor ? "Vendor" : actor?.canApprove ? "Approver" : "Requester";
+  const requestsActive =
+    pathname === "/" ||
+    pathname.startsWith("/requests/") ||
+    pathname.startsWith("/vendor/requests/");
+  const newRequestActive = pathname === "/requests/new";
 
   const signOut = async () => {
     await authClient.signOut();
@@ -30,61 +51,116 @@ export const AppShell = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <div className="min-h-svh bg-[#f6f7f9]">
-      <header className="sticky top-0 z-30 border-b border-border/80 bg-white/85 backdrop-blur">
-        <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between gap-4 px-4">
-          <Link to="/" className="flex min-w-0 items-center gap-2.5">
-            <span className="flex size-8 shrink-0 items-center justify-center rounded-[10px] bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-sm">
-              <HugeiconsIcon icon={SparklesIcon} strokeWidth={2} className="size-4" />
-            </span>
-            <span className="min-w-0">
-              <span className="block truncate font-semibold text-[15px] leading-tight">
-                Procurement Agent
-              </span>
-              <span className="block truncate text-[11px] text-muted-foreground leading-tight">
-                {actor?.organization?.name ?? actor?.vendor?.name ?? "Workspace"}
-              </span>
-            </span>
-          </Link>
+    <SidebarProvider>
+      <Sidebar collapsible="icon">
+        <SidebarHeader>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton size="lg" tooltip="Procurement Agent" render={<Link to="/" />}>
+                <span className="flex size-8 shrink-0 items-center justify-center rounded-[10px] bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-sm">
+                  <HugeiconsIcon icon={SparklesIcon} strokeWidth={2} className="size-4" />
+                </span>
+                <span className="grid min-w-0 flex-1 leading-tight group-data-[collapsible=icon]:hidden">
+                  <span className="truncate font-semibold text-[15px]">Procurement Agent</span>
+                  <span className="truncate text-muted-foreground text-xs">{workspaceName}</span>
+                </span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarHeader>
 
-          <nav className="hidden items-center gap-1 sm:flex">
-            <Link
-              to="/"
-              className={navLinkClass}
-              activeProps={{ className: "bg-muted text-foreground" }}
-            >
-              <HugeiconsIcon icon={DashboardSquare01Icon} strokeWidth={2} className="size-4" />
-              {actor?.kind === "vendor" ? "Invitations" : "Requests"}
-            </Link>
-            {actor?.kind === "buyer" ? (
-              <Link
-                to="/requests/new"
-                className={navLinkClass}
-                activeProps={{ className: "bg-muted text-foreground" }}
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel>Workspace</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    isActive={requestsActive}
+                    tooltip={isVendor ? "Invitations" : "Requests"}
+                    className="h-11 md:h-9"
+                    render={<Link to="/" />}
+                  >
+                    <HugeiconsIcon icon={DashboardSquare01Icon} strokeWidth={2} />
+                    <span>{isVendor ? "Invitations" : "Requests"}</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                {actor?.kind === "buyer" ? (
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      isActive={newRequestActive}
+                      tooltip="New request"
+                      className="h-11 md:h-9"
+                      render={<Link to="/requests/new" />}
+                    >
+                      <HugeiconsIcon icon={PlusSignIcon} strokeWidth={2} />
+                      <span>New request</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ) : null}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+
+        <SidebarFooter>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              {actor ? (
+                <div className="flex items-center gap-2 rounded-md p-2">
+                  <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted font-medium text-xs">
+                    {roleLabel.slice(0, 1)}
+                  </span>
+                  <span className="grid min-w-0 flex-1 leading-tight group-data-[collapsible=icon]:hidden">
+                    <span className="truncate font-medium text-sm">{actor.user.name}</span>
+                    <span className="truncate text-muted-foreground text-xs">
+                      {actor.user.email}
+                    </span>
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 p-2">
+                  <Skeleton className="size-8 rounded-full" />
+                  <Skeleton className="h-8 w-full" />
+                </div>
+              )}
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                tooltip="Sign out"
+                className="h-11 md:h-9"
+                onClick={() => void signOut()}
               >
-                <HugeiconsIcon icon={PlusSignIcon} strokeWidth={2} className="size-4" />
-                New request
-              </Link>
-            ) : null}
-          </nav>
+                <HugeiconsIcon icon={Logout01Icon} strokeWidth={2} />
+                <span>Sign out</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
+      </Sidebar>
 
+      <SidebarInset className="bg-[#f6f7f9]">
+        <header className="sticky top-0 z-20 flex h-14 items-center justify-between gap-3 border-b border-border/80 bg-[#f6f7f9]/90 px-4 backdrop-blur">
+          <div className="flex min-w-0 items-center gap-2">
+            <SidebarTrigger className="size-11 md:size-7" />
+            <div className="min-w-0 md:hidden">
+              <p className="truncate font-medium text-sm">Procurement Agent</p>
+              <p className="truncate text-muted-foreground text-[11px]">{workspaceName}</p>
+            </div>
+          </div>
           <div className="flex items-center gap-2">
             {actor ? (
-              <Badge variant="secondary" className="hidden rounded-full font-normal md:inline-flex">
-                {actor.kind === "vendor" ? "Vendor" : actor.canApprove ? "Approver" : "Requester"}
+              <Badge variant="secondary" className="rounded-full font-normal">
+                {roleLabel}
               </Badge>
             ) : (
               <Skeleton className="h-5 w-16 rounded-full" />
             )}
-            <Button variant="ghost" size="sm" onClick={signOut} aria-label="Sign out">
-              <HugeiconsIcon icon={Logout01Icon} strokeWidth={2} />
-              <span className="hidden sm:inline">Sign out</span>
-            </Button>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <main className="mx-auto w-full max-w-6xl px-4 py-7 sm:py-9">{children}</main>
-    </div>
+        <main className="mx-auto w-full max-w-6xl px-4 py-7 sm:py-9">{children}</main>
+      </SidebarInset>
+    </SidebarProvider>
   );
 };
