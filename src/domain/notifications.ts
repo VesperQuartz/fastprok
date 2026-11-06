@@ -265,3 +265,11 @@ export const dispatchPendingEmails = async (
 
   return Result.ok({ sent, failed });
 };
+
+export const dispatchEmailsInBackground = (limit = 10) => {
+  void dispatchPendingEmails(limit).then((outcome) => {
+    if (outcome.isErr()) {
+      console.error("Could not dispatch pending emails", outcome.error);
+    }
+  });
+};

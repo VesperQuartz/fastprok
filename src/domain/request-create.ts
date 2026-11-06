@@ -14,7 +14,7 @@ import {
 } from "@/repo/schema";
 import { categoryLabel } from "./categories";
 import { logAgentAction } from "./agent-log";
-import { dispatchPendingEmails, queueNotification } from "./notifications";
+import { dispatchEmailsInBackground, queueNotification } from "./notifications";
 import { parseRequestDraft, type RequestDraft, type RequestParseOverrides } from "./request-parse";
 import { matchVendors, type VendorCandidate } from "./vendor-match";
 
@@ -395,11 +395,7 @@ export const createRequest = async (
     return outcome;
   }
 
-  const dispatch = await dispatchPendingEmails(10);
-
-  if (dispatch.isErr()) {
-    console.error("Could not dispatch invitation emails", dispatch.error);
-  }
+  dispatchEmailsInBackground(10);
 
   return Result.ok({
     ...outcome.value,

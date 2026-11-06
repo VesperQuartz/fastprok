@@ -6,7 +6,7 @@ import { withTransaction } from "@/lib/result/database";
 import { InvalidStateError, NotFoundError, type AppError } from "@/lib/result/errors";
 import { invitations, quotes, requests, user, vendorContacts, vendors } from "@/repo/schema";
 import { logAgentAction } from "./agent-log";
-import { dispatchPendingEmails, queueNotification } from "./notifications";
+import { dispatchEmailsInBackground, queueNotification } from "./notifications";
 
 export type ApproveQuoteInput = {
   requestId: string;
@@ -216,11 +216,7 @@ export const approveQuote = async (
   );
 
   if (outcome.isOk()) {
-    const dispatch = await dispatchPendingEmails(10);
-
-    if (dispatch.isErr()) {
-      console.error("Could not dispatch approval emails", dispatch.error);
-    }
+    dispatchEmailsInBackground(10);
   }
 
   return outcome;

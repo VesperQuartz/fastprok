@@ -20,7 +20,7 @@ import {
   type QuoteSnapshot,
 } from "@/repo/schema";
 import { logAgentAction } from "./agent-log";
-import { dispatchPendingEmails, queueNotification } from "./notifications";
+import { dispatchEmailsInBackground, queueNotification } from "./notifications";
 
 export type QuoteInput = {
   requestId: string;
@@ -311,13 +311,9 @@ export const submitQuote = async (
         status,
       });
     },
-  ).then(async (outcome) => {
+  ).then((outcome) => {
     if (outcome.isOk()) {
-      const dispatch = await dispatchPendingEmails(10);
-
-      if (dispatch.isErr()) {
-        console.error("Could not dispatch quote emails", dispatch.error);
-      }
+      dispatchEmailsInBackground(10);
     }
 
     return outcome;
