@@ -1,0 +1,51 @@
+# Submission kit
+
+## Project title
+
+Procurement Agent — a purchase that never stalls
+
+## Short description
+
+An agentic procurement workspace: describe a need in plain language, and the agent structures it, finds vendors, chases quotes, ranks every offer deterministically, and hands a human approver the final decision.
+
+## Long description
+
+Procurement drags because the work is coordination, not typing. Someone has to read the request, find the right vendors, send invitations, chase non-responders, compare quotes on inconsistent criteria, and keep a record of why the winner won.
+
+Procurement Agent does that coordination. The requester writes one paragraph. Vultr Serverless Inference turns it into structured fields and asks for anything missing. Rules match vendors by category, region, lead time, and reliability. Invitations go out in-app and by email. The agent reminds silent vendors when a quarter of the quote window remains, widens the pool once when there are too few quotes, then scores every quote on cost, speed, reliability, and warranty using weights that match the buyer's priority. The same input always produces the same ranking. AI writes the explanations from the scored numbers only; it never changes the ranking and never approves.
+
+Approvers see the top quotes with the numbers behind each score, an agent timeline, and one approval action. Vendors see only their own quote and can edit it before the deadline, with every version kept. Approval notifies the winner and the rest.
+
+Built with TanStack Start, Bun, oRPC, Drizzle, better-result, Vultr Managed PostgreSQL, Vultr Serverless Inference (deepseek-v4.1-flash-1017), and Resend. Deployed with Dokploy on a Vultr Cloud Compute VM.
+
+Live demo: https://fastprok.kekere.online
+
+## Tech tags
+
+`Vultr` `Serverless Inference` `Managed PostgreSQL` `Bun` `TypeScript` `TanStack Start` `oRPC` `AI Agents` `Procurement`
+
+## Demo accounts
+
+Password for all: `demo1234`
+
+- Requester: `lilbrown3000+buyer@gmail.com`
+- Approver: `lilbrown3000+approver@gmail.com`
+- Vendor: `lilbrown3000+vendor-d@gmail.com`
+
+## 2–3 minute video script
+
+1. **0:00–0:15 — Hook.** Dashboard. "A purchase request usually means a week of email. Watch this one finish in minutes."
+2. **0:15–0:55 — Request.** Sign in as Requester, open **New request**, paste: "We need 15 USB-C docking stations for the customer success team in Lagos. Needed by 24 November. Budget is $1,800. Prioritise the cheapest reliable option." Submit. Point out the AI-structured fields, the invited vendors, and the agent timeline.
+3. **0:55–1:25 — Vendor side.** Sign out, use the Vendor demo button. Open the invitation, submit a quote, then edit the price. Mention that quotes are private and versions are kept.
+4. **1:25–1:55 — Agent work.** Back as Requester. Open the request and press **Run agent check** / **Rank now**. Show the ranked quotes, the score breakdown, flags such as over budget, and the AI reasons that quote only the scored numbers.
+5. **1:55–2:25 — Approval.** Sign in as Approver, add a short note, approve the winner. Show the request status change and the winner/other notifications. Mention only a human can approve.
+6. **2:25–2:40 — Close.** Scroll the agent timeline. "Every decision is repeatable, every action is logged, and Vultr runs the model, the database, and the app."
+
+## Pre-recording checklist
+
+- [ ] `https://fastprok.kekere.online/api/health` returns `{"status":"ok","database":"up"}`
+- [ ] Login page demo buttons work (Requester, Approver, Vendor)
+- [ ] One request is `Awaiting approval` with three ranked quotes for the approval shot
+- [ ] One request is `Collecting quotes` with a submitted quote for the vendor edit shot
+- [ ] Gmail inbox is open in a second tab to show invitation/approval emails
+- [ ] Browser zoom at 100%, notifications muted, bookmarks hidden

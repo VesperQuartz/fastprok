@@ -50,6 +50,25 @@ Rules do the decisions that must be repeatable; AI only reads and explains.
 - **Email:** Resend HTTP API
 - **Errors:** [`better-result`](https://better-result.dev) on server domain boundaries: tagged errors, explicit `Result` returns, transaction rollback on `Err`, and oRPC error mapping
 
+## Vultr services used
+
+- **Vultr Cloud Compute:** an Ubuntu VM runs the app through Dokploy (Railpack build, Bun runtime).
+- **Vultr Managed PostgreSQL:** stores procurement data, sessions, quotes, and the email/notification outbox. SSL is required; the CA certificate is committed at the repository root.
+- **Vultr Serverless Inference:** parses requests and writes quote explanations with `deepseek-v4.1-flash-1017`, using the OpenAI-compatible chat completions API.
+
+## Architecture
+
+```mermaid
+flowchart LR
+  U[Requester / Approver / Vendor] -->|React UI| N[TanStack Start on Bun]
+  N -->|oRPC| D[Domain services<br/>better-result]
+  D --> PG[(Vultr Managed PostgreSQL)]
+  D --> AI[Vultr Serverless Inference]
+  D --> OUT[(email_log outbox)]
+  OUT --> R[Resend API]
+  SCH[Agent scheduler<br/>every 60s] --> D
+```
+
 ## Architecture
 
 ```
@@ -125,6 +144,14 @@ The ranking engine has coverage for priority modes, hard filters, partial quanti
 ## Deployment
 
 The app is deployed with Dokploy on a Vultr VM and served at `https://fastprok.kekere.online`. The build runs with pnpm/Vite+, and the production server is Bun running Nitro's `node-server` output. Vultr Managed PostgreSQL requires SSL; the CA certificate lives at the repository root.
+
+## Limitations and next steps
+
+- Email replies are not read; vendors quote in the app. Inbound email parsing is the next step.
+- Delivery tracking and delay chasing are out of scope for this demo.
+- Single currency (USD) and a fixed category list keep the demo focused.
+- Vendor reliability is seeded history; the next version should update it from completed orders.
+- Member invitations, multiple contacts per vendor, and a rejection flow are intentionally deferred.
 
 ## Scope
 
