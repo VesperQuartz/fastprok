@@ -72,6 +72,9 @@ const envSchema = z
     MAX_REMINDERS: z.coerce.number().int().min(0).default(2),
     INVITE_BATCH_SIZE: z.coerce.number().int().positive().default(3),
     WIDEN_BATCH_SIZE: z.coerce.number().int().positive().default(3),
+    MIN_VALID_QUOTES: z.coerce.number().int().min(1).default(3),
+    QUOTING_EXTENSION_MINUTES: z.coerce.number().int().positive().default(1_440),
+    DEMO_QUOTING_EXTENSION_MINUTES: z.coerce.number().int().positive().default(10),
   })
   .readonly();
 

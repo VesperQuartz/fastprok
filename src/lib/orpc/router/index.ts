@@ -2,6 +2,8 @@ import { canApprove } from "@/lib/actor";
 import { actorProcedure } from "@/lib/orpc/procedures";
 import { base } from "../base";
 import { requestProcedures } from "./requests";
+import { vendorProcedures } from "./vendor";
+import { agentProcedures, notificationProcedures } from "./agent";
 
 export const ping = base.route({ method: "GET", path: "/ping" }).handler(() => ({
   ok: true,
@@ -41,4 +43,7 @@ export default {
   ping,
   me,
   requests: requestProcedures,
+  vendor: vendorProcedures,
+  agent: agentProcedures,
+  notifications: notificationProcedures,
 };

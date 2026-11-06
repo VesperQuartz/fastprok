@@ -97,6 +97,7 @@ export type RankedQuote = {
   quantityOffered: number;
   warrantyMonths: number;
   flags: string[];
+  aiReason?: string | null;
   breakdown: {
     cost: number;
     delivery: number;

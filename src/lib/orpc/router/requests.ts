@@ -1,9 +1,13 @@
 import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { CATEGORY_IDS } from "@/domain/categories";
+import { approveQuote } from "@/domain/approve";
+import { getRequestTimeline } from "@/domain/activity";
 import { createRequest } from "@/domain/request-create";
+import { getBuyerRequest } from "@/domain/request-view";
+import { listRequestQuotes } from "@/domain/quote-submit";
 import { db } from "@/lib/db";
-import { buyerProcedure } from "@/lib/orpc/procedures";
+import { actorProcedure, approverProcedure, buyerProcedure } from "@/lib/orpc/procedures";
 import { tryDatabase } from "@/lib/result/database";
 import { unwrapResult } from "@/lib/result/orpc";
 import { requests } from "@/repo/schema";
@@ -65,7 +69,52 @@ export const list = buyerProcedure
     }));
   });
 
+const requestIdInput = z.object({ requestId: z.uuid() });
+
+export const get = buyerProcedure
+  .route({ method: "GET", path: "/requests/{requestId}" })
+  .input(requestIdInput)
+  .handler(async ({ input, context }) =>
+    unwrapResult(getBuyerRequest(context.actor, input.requestId)),
+  );
+
+export const quoteList = actorProcedure
+  .route({ method: "GET", path: "/requests/{requestId}/quotes" })
+  .input(requestIdInput)
+  .handler(async ({ input, context }) =>
+    unwrapResult(listRequestQuotes(context.actor, input.requestId)),
+  );
+
+export const timeline = buyerProcedure
+  .route({ method: "GET", path: "/requests/{requestId}/timeline" })
+  .input(requestIdInput)
+  .handler(async ({ input, context }) =>
+    unwrapResult(getRequestTimeline(context.actor, input.requestId)),
+  );
+
+const approveInput = requestIdInput.extend({
+  quoteId: z.uuid(),
+  note: z.string().trim().max(1_000).nullable().default(null),
+});
+
+export const approve = approverProcedure
+  .route({ method: "POST", path: "/requests/{requestId}/approve" })
+  .input(approveInput)
+  .handler(async ({ input, context }) =>
+    unwrapResult(
+      approveQuote(context.actor, {
+        requestId: input.requestId,
+        quoteId: input.quoteId,
+        note: input.note,
+      }),
+    ),
+  );
+
 export const requestProcedures = {
   create,
   list,
+  get,
+  quoteList,
+  timeline,
+  approve,
 };
