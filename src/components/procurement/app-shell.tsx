@@ -51,14 +51,14 @@ export const AppShell = ({ children }: { children: ReactNode }) => {
         <SidebarHeader>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton size="lg" tooltip="Procurement Agent" render={<Link to="/" />}>
+              <SidebarMenuButton size="lg" tooltip="fastprok" render={<Link to="/" />}>
                 <img
                   src="/procurement-mark.png"
                   alt=""
                   className="size-8 shrink-0 object-contain"
                 />
                 <span className="grid min-w-0 flex-1 leading-tight group-data-[collapsible=icon]:hidden">
-                  <span className="truncate font-semibold text-[15px]">Procurement Agent</span>
+                  <span className="truncate font-semibold text-[15px]">fastprok</span>
                   <span className="truncate text-muted-foreground text-xs">{workspaceName}</span>
                 </span>
               </SidebarMenuButton>
@@ -141,7 +141,7 @@ export const AppShell = ({ children }: { children: ReactNode }) => {
           <div className="flex min-w-0 items-center gap-2">
             <SidebarTrigger className="size-11 md:size-7" />
             <div className="min-w-0 md:hidden">
-              <p className="truncate font-medium text-sm">Procurement Agent</p>
+              <p className="truncate font-medium text-sm">fastprok</p>
               <p className="truncate text-muted-foreground text-[11px]">{workspaceName}</p>
             </div>
           </div>

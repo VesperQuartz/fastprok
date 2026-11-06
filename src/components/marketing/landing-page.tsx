@@ -32,7 +32,7 @@ export const LandingPage = () => (
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4">
         <Link to="/" className="flex min-w-0 items-center gap-2.5">
           <img src="/procurement-mark.png" alt="" className="size-9 shrink-0 object-contain" />
-          <span className="truncate font-semibold">Procurement Agent</span>
+          <span className="truncate font-semibold">fastprok</span>
         </Link>
         <nav className="flex items-center gap-2">
           <Button variant="ghost" nativeButton={false} render={<Link to="/login" />}>
@@ -174,7 +174,7 @@ export const LandingPage = () => (
 
     <footer className="border-t border-border/70">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 px-4 py-6 text-muted-foreground text-sm sm:flex-row sm:items-center sm:justify-between">
-        <p>Procurement Agent · Vultr Agent Rush 2026</p>
+        <p>fastprok · Vultr Agent Rush 2026</p>
         <div className="flex items-center gap-4">
           <Link to="/login" className="hover:text-foreground">
             Sign in

@@ -10,7 +10,7 @@ const RouteComponent = () => {
     <AuthLayout>
       <Link to="/" className="mb-5 flex flex-col items-center text-center">
         <img src="/procurement-mark.png" alt="" className="mb-3 size-11 object-contain" />
-        <span className="font-semibold text-lg">Procurement Agent</span>
+        <span className="font-semibold text-lg">fastprok</span>
         <span className="mt-0.5 text-muted-foreground text-sm">Set up your workspace.</span>
       </Link>
       <SignUp

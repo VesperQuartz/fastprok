@@ -2,7 +2,7 @@
 
 ## Project title
 
-Procurement Agent — a purchase that never stalls
+fastprok — a purchase that never stalls
 
 ## Short description
 
@@ -12,7 +12,7 @@ An agentic procurement workspace: describe a need in plain language, and the age
 
 Procurement drags because the work is coordination, not typing. Someone has to read the request, find the right vendors, send invitations, chase non-responders, compare quotes on inconsistent criteria, and keep a record of why the winner won.
 
-Procurement Agent does that coordination. The requester writes one paragraph. Vultr Serverless Inference turns it into structured fields and asks for anything missing. Rules match vendors by category, region, lead time, and reliability. Invitations go out in-app and by email. The agent reminds silent vendors when a quarter of the quote window remains, widens the pool once when there are too few quotes, then scores every quote on cost, speed, reliability, and warranty using weights that match the buyer's priority. The same input always produces the same ranking. AI writes the explanations from the scored numbers only; it never changes the ranking and never approves.
+fastprok does that coordination. The requester writes one paragraph. Vultr Serverless Inference turns it into structured fields and asks for anything missing. Rules match vendors by category, region, lead time, and reliability. Invitations go out in-app and by email. The agent reminds silent vendors when a quarter of the quote window remains, widens the pool once when there are too few quotes, then scores every quote on cost, speed, reliability, and warranty using weights that match the buyer's priority. The same input always produces the same ranking. AI writes the explanations from the scored numbers only; it never changes the ranking and never approves.
 
 Approvers see the top quotes with the numbers behind each score, an agent timeline, and one approval action. Vendors see only their own quote and can edit it before the deadline, with every version kept. Approval notifies the winner and the rest.
 

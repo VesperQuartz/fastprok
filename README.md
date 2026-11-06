@@ -1,4 +1,4 @@
-# Procurement Agent
+# fastprok
 
 An agentic procurement workspace for the Vultr **Agent Rush** hackathon (Challenge 2: Procurement).
 

@@ -73,7 +73,7 @@ const renderEmailHtml = ({ heading, lines, cta }: NotificationEmail) => {
 <html>
   <body style="margin:0;padding:24px;background:#f8fafc;font-family:ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;">
     <div style="max-width:560px;margin:0 auto;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:28px;">
-      <p style="margin:0 0 20px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:#0f766e;font-weight:700;">Procurement Agent</p>
+      <p style="margin:0 0 20px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:#0f766e;font-weight:700;">fastprok</p>
       <h1 style="margin:0 0 16px;font-size:22px;line-height:1.3;color:#0f172a;">${escapeHtml(heading)}</h1>
       ${content}
       ${button}

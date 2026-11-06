@@ -1,6 +1,6 @@
 import z from "zod";
 
-const APP_NAME = "Procurement Agent";
+const APP_NAME = "fastprok";
 
 const normalizePostgresUrl = (value: string) =>
   value
