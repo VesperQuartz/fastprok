@@ -2,7 +2,7 @@
 	"name": "com.mrlectus.start",
 	"private": true,
 	"type": "module",
-	"packageManager": "pnpm@12.17.0",
+	"packageManager": "pnpm@9",
 	"scripts": {
 		"dev": "vp dev",
 		"start": "bun .output/server/index.mjs",
