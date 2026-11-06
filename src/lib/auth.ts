@@ -6,9 +6,17 @@ import * as schema from "@/repo/schema";
 import { db } from "./db";
 
 const authOptions: BetterAuthOptions = {
-  baseURL: serverEnv.BETTER_AUTH_BASE_URL,
+  baseURL: {
+    allowedHosts: [serverEnv.BETTER_AUTH_BASE_URL, "http://localhost*"],
+  },
   secret: serverEnv.BETTER_AUTH_SECRET,
-  trustedOrigins: [serverEnv.APP_BASE_URL],
+  session: {
+    cookieCache: {
+      enabled: true,
+      maxAge: 5 * 60,
+    },
+  },
+  trustedOrigins: [serverEnv.APP_BASE_URL, "https://*.kekere.online", "http://localhost:*"],
   rateLimit: {
     window: 10,
     max: 100,
