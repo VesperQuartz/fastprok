@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { toast } from "sonner";
 import { orpc } from "@/lib/orpc/client";
 
 const NotificationsPage = () => {
@@ -22,6 +23,7 @@ const NotificationsPage = () => {
   const markAll = useMutation(
     orpc.notifications.markAllRead.mutationOptions({
       onSuccess: () => queryClient.invalidateQueries(),
+      onError: (error) => toast.error(error.message),
     }),
   );
 

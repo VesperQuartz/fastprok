@@ -5,6 +5,7 @@ import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
 import { orpc } from "@/lib/orpc/client";
 import { NotificationRow } from "./notification-row";
 
@@ -18,6 +19,7 @@ export const NotificationBell = () => {
   const markAll = useMutation(
     orpc.notifications.markAllRead.mutationOptions({
       onSuccess: () => queryClient.invalidateQueries(),
+      onError: (error) => toast.error(error.message),
     }),
   );
 
