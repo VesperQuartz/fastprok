@@ -108,7 +108,7 @@ const NewRequestPage = () => {
           What do you need?
         </h1>
         <p className="mt-1 max-w-2xl text-muted-foreground text-sm text-pretty">
-          Describe it in plain language. The agent fills the gaps.
+          Describe it in plain language.
         </p>
       </div>
 
@@ -125,9 +125,6 @@ const NewRequestPage = () => {
                 className="min-h-32 text-sm"
                 required
               />
-              <p className="text-muted-foreground text-xs">
-                Quantity, location, and needed-by date help.
-              </p>
             </div>
 
             <div className="border-t pt-5">
@@ -250,9 +247,7 @@ const NewRequestPage = () => {
                 {createRequest.isPending ? "Agent is reading your request…" : "Send to the agent"}
                 <HugeiconsIcon icon={ArrowRight01Icon} strokeWidth={2} />
               </Button>
-              <p className="text-muted-foreground text-xs">
-                Vendors never see your budget. They quote in the app.
-              </p>
+              <p className="text-muted-foreground text-xs">Vendors never see your budget.</p>
             </div>
           </CardContent>
         </Card>
