@@ -30,6 +30,7 @@
     "@icons-pack/react-simple-icons": "^13.15.1",
     "@neondatabase/serverless": "^1.2.0",
     "@orpc/client": "^2.0.0-beta.45",
+    "@orpc/contract": "2.0.0-beta.45",
     "@orpc/json-schema": "^2.0.0-beta.45",
     "@orpc/openapi": "^2.0.0-beta.45",
     "@orpc/server": "^2.0.0-beta.45",

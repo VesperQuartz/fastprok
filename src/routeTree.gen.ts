@@ -8,166 +8,243 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from "./routes/__root";
-import { Route as dashboardRouteRouteImport } from "./routes/(dashboard)/route";
-import { Route as authLoginRouteImport } from "./routes/(auth)/login";
-import { Route as authRegisterRouteImport } from "./routes/(auth)/register";
-import { Route as dashboardIndexRouteImport } from "./routes/(dashboard)/index";
-import { Route as ApiSplatRouteImport } from "./routes/api/$";
-import { Route as ApiAuthSplatRouteImport } from "./routes/api/auth/$";
-import { Route as ApiRpcSplatRouteImport } from "./routes/api/rpc/$";
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as dashboardRouteRouteImport } from './routes/(dashboard)/route'
+import { Route as authLoginRouteImport } from './routes/(auth)/login'
+import { Route as authRegisterRouteImport } from './routes/(auth)/register'
+import { Route as dashboardIndexRouteImport } from './routes/(dashboard)/index'
+import { Route as ApiSplatRouteImport } from './routes/api/$'
+import { Route as dashboardRequestsRequestIdRouteImport } from './routes/(dashboard)/requests/$requestId'
+import { Route as dashboardRequestsNewRouteImport } from './routes/(dashboard)/requests/new'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as ApiRpcSplatRouteImport } from './routes/api/rpc/$'
+import { Route as dashboardVendorRequestsRequestIdRouteImport } from './routes/(dashboard)/vendor/requests/$requestId'
 
 const dashboardRouteRoute = dashboardRouteRouteImport.update({
-  id: "/(dashboard)",
+  id: '/(dashboard)',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const authLoginRoute = authLoginRouteImport.update({
-  id: "/(auth)/login",
-  path: "/login",
+  id: '/(auth)/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const authRegisterRoute = authRegisterRouteImport.update({
-  id: "/(auth)/register",
-  path: "/register",
+  id: '/(auth)/register',
+  path: '/register',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const dashboardIndexRoute = dashboardIndexRouteImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => dashboardRouteRoute,
-} as any);
+} as any)
 const ApiSplatRoute = ApiSplatRouteImport.update({
-  id: "/api/$",
-  path: "/api/$",
+  id: '/api/$',
+  path: '/api/$',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
+const dashboardRequestsRequestIdRoute =
+  dashboardRequestsRequestIdRouteImport.update({
+    id: '/requests/$requestId',
+    path: '/requests/$requestId',
+    getParentRoute: () => dashboardRouteRoute,
+  } as any)
+const dashboardRequestsNewRoute = dashboardRequestsNewRouteImport.update({
+  id: '/requests/new',
+  path: '/requests/new',
+  getParentRoute: () => dashboardRouteRoute,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
-  id: "/api/auth/$",
-  path: "/api/auth/$",
+  id: '/api/auth/$',
+  path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const ApiRpcSplatRoute = ApiRpcSplatRouteImport.update({
-  id: "/api/rpc/$",
-  path: "/api/rpc/$",
+  id: '/api/rpc/$',
+  path: '/api/rpc/$',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
+const dashboardVendorRequestsRequestIdRoute =
+  dashboardVendorRequestsRequestIdRouteImport.update({
+    id: '/vendor/requests/$requestId',
+    path: '/vendor/requests/$requestId',
+    getParentRoute: () => dashboardRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  "/login": typeof authLoginRoute;
-  "/register": typeof authRegisterRoute;
-  "/api/$": typeof ApiSplatRoute;
-  "/": typeof dashboardIndexRoute;
-  "/api/auth/$": typeof ApiAuthSplatRoute;
-  "/api/rpc/$": typeof ApiRpcSplatRoute;
+  '/login': typeof authLoginRoute
+  '/register': typeof authRegisterRoute
+  '/api/$': typeof ApiSplatRoute
+  '/': typeof dashboardIndexRoute
+  '/requests/$requestId': typeof dashboardRequestsRequestIdRoute
+  '/requests/new': typeof dashboardRequestsNewRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/rpc/$': typeof ApiRpcSplatRoute
+  '/vendor/requests/$requestId': typeof dashboardVendorRequestsRequestIdRoute
 }
 export interface FileRoutesByTo {
-  "/login": typeof authLoginRoute;
-  "/register": typeof authRegisterRoute;
-  "/api/$": typeof ApiSplatRoute;
-  "/": typeof dashboardIndexRoute;
-  "/api/auth/$": typeof ApiAuthSplatRoute;
-  "/api/rpc/$": typeof ApiRpcSplatRoute;
+  '/login': typeof authLoginRoute
+  '/register': typeof authRegisterRoute
+  '/api/$': typeof ApiSplatRoute
+  '/': typeof dashboardIndexRoute
+  '/requests/$requestId': typeof dashboardRequestsRequestIdRoute
+  '/requests/new': typeof dashboardRequestsNewRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/rpc/$': typeof ApiRpcSplatRoute
+  '/vendor/requests/$requestId': typeof dashboardVendorRequestsRequestIdRoute
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport;
-  "/(dashboard)": typeof dashboardRouteRouteWithChildren;
-  "/(auth)/login": typeof authLoginRoute;
-  "/(auth)/register": typeof authRegisterRoute;
-  "/api/$": typeof ApiSplatRoute;
-  "/(dashboard)/": typeof dashboardIndexRoute;
-  "/api/auth/$": typeof ApiAuthSplatRoute;
-  "/api/rpc/$": typeof ApiRpcSplatRoute;
+  __root__: typeof rootRouteImport
+  '/(dashboard)': typeof dashboardRouteRouteWithChildren
+  '/(auth)/login': typeof authLoginRoute
+  '/(auth)/register': typeof authRegisterRoute
+  '/api/$': typeof ApiSplatRoute
+  '/(dashboard)/': typeof dashboardIndexRoute
+  '/(dashboard)/requests/$requestId': typeof dashboardRequestsRequestIdRoute
+  '/(dashboard)/requests/new': typeof dashboardRequestsNewRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/rpc/$': typeof ApiRpcSplatRoute
+  '/(dashboard)/vendor/requests/$requestId': typeof dashboardVendorRequestsRequestIdRoute
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: "/login" | "/register" | "/api/$" | "/" | "/api/auth/$" | "/api/rpc/$";
-  fileRoutesByTo: FileRoutesByTo;
-  to: "/login" | "/register" | "/api/$" | "/" | "/api/auth/$" | "/api/rpc/$";
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | '/login'
+    | '/register'
+    | '/api/$'
+    | '/'
+    | '/requests/$requestId'
+    | '/requests/new'
+    | '/api/auth/$'
+    | '/api/rpc/$'
+    | '/vendor/requests/$requestId'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/login'
+    | '/register'
+    | '/api/$'
+    | '/'
+    | '/requests/$requestId'
+    | '/requests/new'
+    | '/api/auth/$'
+    | '/api/rpc/$'
+    | '/vendor/requests/$requestId'
   id:
-    | "__root__"
-    | "/(dashboard)"
-    | "/(auth)/login"
-    | "/(auth)/register"
-    | "/api/$"
-    | "/(dashboard)/"
-    | "/api/auth/$"
-    | "/api/rpc/$";
-  fileRoutesById: FileRoutesById;
+    | '__root__'
+    | '/(dashboard)'
+    | '/(auth)/login'
+    | '/(auth)/register'
+    | '/api/$'
+    | '/(dashboard)/'
+    | '/(dashboard)/requests/$requestId'
+    | '/(dashboard)/requests/new'
+    | '/api/auth/$'
+    | '/api/rpc/$'
+    | '/(dashboard)/vendor/requests/$requestId'
+  fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  dashboardRouteRoute: typeof dashboardRouteRouteWithChildren;
-  authLoginRoute: typeof authLoginRoute;
-  authRegisterRoute: typeof authRegisterRoute;
-  ApiSplatRoute: typeof ApiSplatRoute;
-  ApiAuthSplatRoute: typeof ApiAuthSplatRoute;
-  ApiRpcSplatRoute: typeof ApiRpcSplatRoute;
+  dashboardRouteRoute: typeof dashboardRouteRouteWithChildren
+  authLoginRoute: typeof authLoginRoute
+  authRegisterRoute: typeof authRegisterRoute
+  ApiSplatRoute: typeof ApiSplatRoute
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiRpcSplatRoute: typeof ApiRpcSplatRoute
 }
 
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    "/(dashboard)": {
-      id: "/(dashboard)";
-      path: "";
-      fullPath: "";
-      preLoaderRoute: typeof dashboardRouteRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/(auth)/login": {
-      id: "/(auth)/login";
-      path: "/login";
-      fullPath: "/login";
-      preLoaderRoute: typeof authLoginRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/(auth)/register": {
-      id: "/(auth)/register";
-      path: "/register";
-      fullPath: "/register";
-      preLoaderRoute: typeof authRegisterRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/(dashboard)/": {
-      id: "/(dashboard)/";
-      path: "/";
-      fullPath: "/";
-      preLoaderRoute: typeof dashboardIndexRouteImport;
-      parentRoute: typeof dashboardRouteRoute;
-    };
-    "/api/$": {
-      id: "/api/$";
-      path: "/api/$";
-      fullPath: "/api/$";
-      preLoaderRoute: typeof ApiSplatRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/api/auth/$": {
-      id: "/api/auth/$";
-      path: "/api/auth/$";
-      fullPath: "/api/auth/$";
-      preLoaderRoute: typeof ApiAuthSplatRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/api/rpc/$": {
-      id: "/api/rpc/$";
-      path: "/api/rpc/$";
-      fullPath: "/api/rpc/$";
-      preLoaderRoute: typeof ApiRpcSplatRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+    '/(dashboard)': {
+      id: '/(dashboard)'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof dashboardRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/login': {
+      id: '/(auth)/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof authLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/register': {
+      id: '/(auth)/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof authRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(dashboard)/': {
+      id: '/(dashboard)/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof dashboardIndexRouteImport
+      parentRoute: typeof dashboardRouteRoute
+    }
+    '/api/$': {
+      id: '/api/$'
+      path: '/api/$'
+      fullPath: '/api/$'
+      preLoaderRoute: typeof ApiSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(dashboard)/requests/$requestId': {
+      id: '/(dashboard)/requests/$requestId'
+      path: '/requests/$requestId'
+      fullPath: '/requests/$requestId'
+      preLoaderRoute: typeof dashboardRequestsRequestIdRouteImport
+      parentRoute: typeof dashboardRouteRoute
+    }
+    '/(dashboard)/requests/new': {
+      id: '/(dashboard)/requests/new'
+      path: '/requests/new'
+      fullPath: '/requests/new'
+      preLoaderRoute: typeof dashboardRequestsNewRouteImport
+      parentRoute: typeof dashboardRouteRoute
+    }
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/rpc/$': {
+      id: '/api/rpc/$'
+      path: '/api/rpc/$'
+      fullPath: '/api/rpc/$'
+      preLoaderRoute: typeof ApiRpcSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(dashboard)/vendor/requests/$requestId': {
+      id: '/(dashboard)/vendor/requests/$requestId'
+      path: '/vendor/requests/$requestId'
+      fullPath: '/vendor/requests/$requestId'
+      preLoaderRoute: typeof dashboardVendorRequestsRequestIdRouteImport
+      parentRoute: typeof dashboardRouteRoute
+    }
   }
 }
 
 interface dashboardRouteRouteChildren {
-  dashboardIndexRoute: typeof dashboardIndexRoute;
+  dashboardIndexRoute: typeof dashboardIndexRoute
+  dashboardRequestsRequestIdRoute: typeof dashboardRequestsRequestIdRoute
+  dashboardRequestsNewRoute: typeof dashboardRequestsNewRoute
+  dashboardVendorRequestsRequestIdRoute: typeof dashboardVendorRequestsRequestIdRoute
 }
 
 const dashboardRouteRouteChildren: dashboardRouteRouteChildren = {
   dashboardIndexRoute: dashboardIndexRoute,
-};
+  dashboardRequestsRequestIdRoute: dashboardRequestsRequestIdRoute,
+  dashboardRequestsNewRoute: dashboardRequestsNewRoute,
+  dashboardVendorRequestsRequestIdRoute: dashboardVendorRequestsRequestIdRoute,
+}
 
 const dashboardRouteRouteWithChildren = dashboardRouteRoute._addFileChildren(
   dashboardRouteRouteChildren,
-);
+)
 
 const rootRouteChildren: RootRouteChildren = {
   dashboardRouteRoute: dashboardRouteRouteWithChildren,
@@ -176,17 +253,17 @@ const rootRouteChildren: RootRouteChildren = {
   ApiSplatRoute: ApiSplatRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiRpcSplatRoute: ApiRpcSplatRoute,
-};
+}
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>();
+  ._addFileTypes<FileRouteTypes>()
 
-import type { getRouter } from "./router.tsx";
-import type { startInstance } from "./start.ts";
-declare module "@tanstack/react-start" {
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
   interface Register {
-    ssr: true;
-    router: Awaited<ReturnType<typeof getRouter>>;
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>;
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
   }
 }

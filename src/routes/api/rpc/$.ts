@@ -1,12 +1,6 @@
 import "@/polyfill";
 
-import {
-  BatchHandlerPlugin,
-  CORSPlugin,
-  GetMethodCsrfProtectionHandlerPlugin,
-  RequestCompressionHandlerPlugin,
-  ResponseCompressionHandlerPlugin,
-} from "@orpc/server/plugins";
+import { CORSPlugin, GetMethodCsrfProtectionHandlerPlugin } from "@orpc/server/plugins";
 import { createFileRoute } from "@tanstack/react-router";
 import { getCookies } from "@tanstack/react-start/server";
 import router from "@/lib/orpc/router";
@@ -30,9 +24,6 @@ const handler = new OpenAPIHandler(router, {
       allowMethods: ["GET", "HEAD", "PUT", "POST", "DELETE", "PATCH"],
       exposeHeaders: ["Content-Disposition", "Standard-Server"],
     }),
-    new BatchHandlerPlugin(),
-    new ResponseCompressionHandlerPlugin(),
-    new RequestCompressionHandlerPlugin(),
     new GetMethodCsrfProtectionHandlerPlugin(),
     new OpenAPIReferenceHandlerPlugin({
       spec: () =>

@@ -21,7 +21,7 @@ export const Route = createRootRouteWithContext<RootContext>()({
         content: "width=device-width, initial-scale=1",
       },
       {
-        title: "TanStack Start Starter",
+        title: "Procurement Agent",
       },
     ],
   }),

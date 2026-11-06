@@ -272,7 +272,7 @@ export const submitQuote = async (
         title: `Quote ${status === "created" ? "received" : "updated"} from ${actor.vendorName}`,
         body: `${actor.vendorName} quoted ${invite.quantity} ${invite.unit} of ${invite.requestTitle} at ${(totalPriceCents / 100).toFixed(2)} USD, delivering ${input.deliveryDate}.`,
         email: {
-          subject: `Quote ${status} for ${invite.requestTitle}`,
+          subject: `Quote ${status === "created" ? "received" : "updated"} for ${invite.requestTitle}`,
           heading: `${actor.vendorName} submitted a quote`,
           lines: [
             `Request: ${invite.requestTitle}`,

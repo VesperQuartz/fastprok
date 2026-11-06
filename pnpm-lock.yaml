@@ -217,6 +217,9 @@ importers:
       '@orpc/client':
         specifier: ^2.0.0-beta.45
         version: 2.0.0-beta.45
+      '@orpc/contract':
+        specifier: 2.0.0-beta.45
+        version: 2.0.0-beta.45
       '@orpc/json-schema':
         specifier: ^2.0.0-beta.45
         version: 2.0.0-beta.45(crossws@0.4.17(srvx@1.0.8))

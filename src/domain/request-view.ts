@@ -1,4 +1,4 @@
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, sql } from "drizzle-orm";
 import { Result } from "better-result";
 import type { BuyerActor, VendorActor } from "@/lib/actor";
 import { db } from "@/lib/db";
@@ -6,6 +6,7 @@ import { tryDatabase } from "@/lib/result/database";
 import { NotFoundError, type AppError } from "@/lib/result/errors";
 import {
   invitations,
+  quoteRevisions,
   quotes,
   requests,
   vendors,
@@ -70,6 +71,7 @@ export type VendorRequestView = {
     status: string;
     firstSubmittedAt: string;
     updatedAt: string;
+    version: number;
   } | null;
 };
 
@@ -222,6 +224,11 @@ export const getVendorRequest = async (
         status: quotes.status,
         firstSubmittedAt: quotes.firstSubmittedAt,
         updatedAt: quotes.updatedAt,
+        version: sql<number>`(
+          select max(${quoteRevisions.version})
+          from ${quoteRevisions}
+          where ${quoteRevisions.quoteId} = ${quotes.id}
+        )`,
       })
       .from(quotes)
       .where(and(eq(quotes.requestId, requestId), eq(quotes.vendorId, actor.vendorId)))
@@ -241,6 +248,7 @@ export const getVendorRequest = async (
       quote: quote
         ? {
             ...quote,
+            version: quote.version ?? 1,
             firstSubmittedAt: quote.firstSubmittedAt.toISOString(),
             updatedAt: quote.updatedAt.toISOString(),
           }

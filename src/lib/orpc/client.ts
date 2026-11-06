@@ -4,18 +4,12 @@ import { createRouterClient } from "@orpc/server";
 import { createTanstackQueryUtils } from "@orpc/tanstack-query";
 import { createIsomorphicFn } from "@tanstack/react-start";
 import { getCookies, getRequestHeaders } from "@tanstack/react-start/server";
+import { OpenAPILink } from "@orpc/openapi/fetch";
 
 import router from "@/lib/orpc/router";
-import { OpenAPILink } from "@orpc/openapi/fetch";
-import {
-  BatchLinkPlugin,
-  RequestCompressionLinkPlugin,
-  ResponseCompressionLinkPlugin,
-} from "@orpc/client/plugins";
+import { clientContract } from "@/lib/orpc/client-contract";
 
-interface ClientContext {
-  cache?: RequestCache;
-}
+type ServerRouter = typeof import("@/lib/orpc/router").default;
 
 const getORPCClient = createIsomorphicFn()
   .server(() =>
@@ -26,31 +20,14 @@ const getORPCClient = createIsomorphicFn()
       }),
     }),
   )
-  .client((): RouterClient<typeof router> => {
-    const link = new OpenAPILink<ClientContext>(router, {
-      url: `${window.location.origin}/api/rpc` as StandardUrl,
-      plugins: [
-        new RequestCompressionLinkPlugin(),
-        new ResponseCompressionLinkPlugin(),
-        new BatchLinkPlugin({
-          groups: [
-            {
-              condition: ({ context }) => context?.cache === "force-cache",
-              context: {
-                cache: "force-cache",
-              },
-            },
-            {
-              condition: () => true,
-              context: {},
-            },
-          ],
-        }),
-      ],
+  .client((): RouterClient<ServerRouter> => {
+    const link = new OpenAPILink(clientContract, {
+      url: "/api/rpc" as StandardUrl,
     });
-    return createORPCClient(link);
+
+    return createORPCClient(link) as RouterClient<ServerRouter>;
   });
 
-export const client: RouterClient<typeof router> = getORPCClient();
+export const client: RouterClient<ServerRouter> = getORPCClient();
 
 export const orpc = createTanstackQueryUtils(client);
