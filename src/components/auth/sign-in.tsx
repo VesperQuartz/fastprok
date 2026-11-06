@@ -29,9 +29,13 @@ export const SignIn = ({ redirectTo }: { redirectTo?: string }) => {
       email: "",
       password: "",
     },
-    validators: {
-      onSubmit: signInSchema,
-    },
+    // Empty triggers = no change/blur checks, but still validates on submit.
+    validators: [
+      {
+        run: signInSchema,
+        triggers: [],
+      },
+    ],
     onSubmit: async ({ value }) => {
       setFormError(null);
 
@@ -82,12 +86,12 @@ export const SignIn = ({ redirectTo }: { redirectTo?: string }) => {
                     type="email"
                     autoComplete="email"
                     placeholder="you@example.com"
-                    value={field.state.value}
+                    value={field.value}
                     onBlur={field.handleBlur}
                     onChange={(e) => field.handleChange(e.target.value)}
-                    aria-invalid={field.state.meta.errors.length > 0}
+                    aria-invalid={field.meta.isInvalid}
                   />
-                  <FieldError errors={field.state.meta.errors} />
+                  <FieldError errors={field.errors} />
                 </Field>
               )}
             </form.Field>
@@ -102,12 +106,12 @@ export const SignIn = ({ redirectTo }: { redirectTo?: string }) => {
                     type="password"
                     autoComplete="current-password"
                     placeholder="••••••••"
-                    value={field.state.value}
+                    value={field.value}
                     onBlur={field.handleBlur}
                     onChange={(e) => field.handleChange(e.target.value)}
-                    aria-invalid={field.state.meta.errors.length > 0}
+                    aria-invalid={field.meta.isInvalid}
                   />
-                  <FieldError errors={field.state.meta.errors} />
+                  <FieldError errors={field.errors} />
                 </Field>
               )}
             </form.Field>
