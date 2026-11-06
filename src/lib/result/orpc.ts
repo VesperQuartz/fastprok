@@ -49,6 +49,13 @@ export const toORPCError = (error: AppError): AnyORPCError =>
         message: "The email service is unavailable right now.",
       });
     },
+    StorageError: (cause) => {
+      console.error("Storage operation failed", cause.operation, cause.cause);
+
+      return new ORPCError("BAD_GATEWAY", {
+        message: "File storage is unavailable right now.",
+      });
+    },
   });
 
 export const unwrapResult = async <T, E extends AppError>(

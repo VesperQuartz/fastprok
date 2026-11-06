@@ -64,6 +64,12 @@ const envSchema = z
       .default("https://api.vultrinference.com/v1")
       .pipe(z.url()),
 
+    AWS_ACCESS_KEY: z.string().trim().optional(),
+    AWS_SECRET_KEY: z.string().trim().optional(),
+    AWS_HOST_BASE: z.string().trim().optional(),
+    AWS_BUCKET: z.string().trim().optional(),
+    AWS_REGION: z.string().trim().default("us-east-1"),
+
     DEMO_MODE: booleanFromEnv(false),
     AGENT_TICK_MS: z.coerce.number().int().min(5_000).default(60_000),
 

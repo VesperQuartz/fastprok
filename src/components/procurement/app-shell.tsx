@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/sidebar";
 import { authClient } from "@/lib/auth-client";
 import { orpc } from "@/lib/orpc/client";
+import { NotificationBell } from "./notification-bell";
 
 export const AppShell = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
@@ -145,7 +146,8 @@ export const AppShell = ({ children }: { children: ReactNode }) => {
               <p className="truncate text-muted-foreground text-[11px]">{workspaceName}</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
+            <NotificationBell />
             {actor ? (
               <Badge variant="secondary" className="rounded-full font-normal">
                 {roleLabel}

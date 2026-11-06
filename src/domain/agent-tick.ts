@@ -7,7 +7,6 @@ import type { AppError } from "@/lib/result/errors";
 import {
   agentRuns,
   invitations,
-  organizationMembers,
   quotes,
   requests,
   user,
@@ -17,6 +16,7 @@ import {
 } from "@/repo/schema";
 import { logAgentAction } from "./agent-log";
 import type { CategoryId } from "./categories";
+import { requestAudience } from "./notification-audience";
 import {
   dispatchPendingEmails,
   queueNotification,
@@ -69,33 +69,6 @@ const contactsByVendor = async (tx: DbTransaction, vendorIds: string[]) => {
   }
 
   return grouped;
-};
-
-const requestAudience = async (tx: DbTransaction, organizationId: string, creatorId: string) => {
-  const members = await tx
-    .select({ id: user.id, name: user.name, email: user.email })
-    .from(organizationMembers)
-    .innerJoin(user, eq(organizationMembers.userId, user.id))
-    .where(
-      and(
-        eq(organizationMembers.organizationId, organizationId),
-        inArray(organizationMembers.role, ["approver", "both"]),
-      ),
-    );
-
-  const creator = await tx
-    .select({ id: user.id, name: user.name, email: user.email })
-    .from(user)
-    .where(eq(user.id, creatorId))
-    .limit(1);
-
-  const recipients = new Map<string, NotificationRecipient>();
-
-  for (const row of [...members, ...creator]) {
-    recipients.set(row.id, { userId: row.id, name: row.name, email: row.email });
-  }
-
-  return [...recipients.values()];
 };
 
 export type AgentTickInput = {

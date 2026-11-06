@@ -312,6 +312,29 @@ export const quoteRevisions = pgTable(
   (table) => [uniqueIndex("quote_revisions_quote_version_uidx").on(table.quoteId, table.version)],
 );
 
+export const quoteDocuments = pgTable(
+  "quote_documents",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    quoteId: uuid("quote_id")
+      .notNull()
+      .references(() => quotes.id, { onDelete: "cascade" }),
+    storageKey: text("storage_key").notNull(),
+    fileName: text("file_name").notNull(),
+    mimeType: text("mime_type").notNull(),
+    sizeBytes: integer("size_bytes").notNull(),
+    uploadedByUserId: text("uploaded_by_user_id").references(() => user.id, {
+      onDelete: "set null",
+    }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull()
+      .$onUpdate(() => new Date()),
+  },
+  (table) => [uniqueIndex("quote_documents_quote_uidx").on(table.quoteId)],
+);
+
 export const agentRuns = pgTable("agent_runs", {
   id: uuid("id").primaryKey().defaultRandom(),
   status: text("status").notNull().default("running"),

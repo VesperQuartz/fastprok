@@ -55,7 +55,7 @@ export class InvalidStateError extends TaggedError("InvalidStateError")<{
     super({
       action,
       currentStatus,
-      message: `Cannot ${action} while the request is ${currentStatus}.`,
+      message: `Cannot ${action} while the request is ${currentStatus.replaceAll("_", " ")}.`,
     });
   }
 }
@@ -132,6 +132,20 @@ export class EmailError extends TaggedError("EmailError")<{
   }
 }
 
+export class StorageError extends TaggedError("StorageError")<{
+  operation: string;
+  cause: unknown;
+  message: string;
+}> {
+  constructor({ operation, cause }: { operation: string; cause: unknown }) {
+    super({
+      operation,
+      cause,
+      message: `File storage operation "${operation}" failed.`,
+    });
+  }
+}
+
 export type AppError =
   | UnauthenticatedError
   | ForbiddenError
@@ -141,4 +155,5 @@ export type AppError =
   | InvalidInputError
   | DatabaseError
   | AiError
-  | EmailError;
+  | EmailError
+  | StorageError;

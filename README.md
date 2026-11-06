@@ -25,8 +25,9 @@ The login page has one-click demo buttons for the requester, approver, and a ven
 
 - **Requester:** sign in, create a request from a plain-language description, watch the agent parse it, see matched vendors, compare ranked quotes, follow the agent timeline.
 - **Approver:** everything a requester sees, plus approve one quote with an optional note. Only approvers can approve.
-- **Vendor:** see invitations, submit a quote, edit it before the deadline (every version is kept), see the outcome after approval.
-- **Agent:** reminder schedule, one-time vendor widening, deadline ranking, AI explanations sourced only from scored data, in-app notifications and email outbox.
+- **Vendor:** see invitations, submit a quote, attach an optional proforma invoice, edit the quote before the deadline (every version is kept), see the outcome after approval.
+- **Agent:** reminder schedule, one-time vendor widening, deadline ranking, AI explanations sourced only from scored data, in-app notifications, and the email outbox.
+- **Notifications:** a bell in the workspace header shows unread activity, deep-links to the request, and marks items read. The full page is at `/notifications`.
 
 ## How the agent decides
 
@@ -45,6 +46,7 @@ Rules do the decisions that must be repeatable; AI only reads and explains.
 - **Framework:** TanStack Start + React 19, Vite+
 - **API:** oRPC over an OpenAPI handler
 - **Database:** Vultr Managed PostgreSQL 18 with Drizzle ORM
+- **Object storage:** Vultr Object Storage, S3-compatible, through Bun's built-in S3 client
 - **Auth:** better-auth (email + password)
 - **AI:** Vultr Serverless Inference (`deepseek-v4.1-flash-1017`)
 - **Email:** Resend HTTP API
@@ -53,7 +55,8 @@ Rules do the decisions that must be repeatable; AI only reads and explains.
 ## Vultr services used
 
 - **Vultr Cloud Compute:** an Ubuntu VM runs the app through Dokploy (Railpack build, Bun runtime).
-- **Vultr Managed PostgreSQL:** stores procurement data, sessions, quotes, and the email/notification outbox. SSL is required; the CA certificate is committed at the repository root.
+- **Vultr Managed PostgreSQL:** stores procurement data, sessions, quotes, document metadata, and the email/notification outbox. SSL is required; the CA certificate is committed at the repository root.
+- **Vultr Object Storage:** keeps vendor proforma invoices in a private S3-compatible bucket. Files are served through five-minute presigned URLs after an access check.
 - **Vultr Serverless Inference:** parses requests and writes quote explanations with `deepseek-v4.1-flash-1017`, using the OpenAI-compatible chat completions API.
 
 ## Architecture
@@ -63,6 +66,7 @@ flowchart LR
   U[Requester / Approver / Vendor] -->|React UI| N[TanStack Start on Bun]
   N -->|oRPC| D[Domain services<br/>better-result]
   D --> PG[(Vultr Managed PostgreSQL)]
+  D --> S3[(Vultr Object Storage<br/>proforma invoices)]
   D --> AI[Vultr Serverless Inference]
   D --> OUT[(email_log outbox)]
   OUT --> R[Resend API]
@@ -82,13 +86,16 @@ src/
     recommendation-ai.ts  AI wording with template fallback
     agent-tick.ts         reminders, widening, deadline ranking
     approve.ts            approver-only approval and outcomes
+    proforma.ts           proforma upload, access checks, S3 metadata
+    activity.ts           timeline and notification read state
   lib/
     result/               tagged errors, DB helpers, oRPC mapping
+    storage.ts            Bun S3 client and presigned URLs
     orpc/                 router, procedures, client contract
   routes/                 UI pages and API handlers
   repo/schema/            auth + procurement schema
   server/                 startup migrations and agent scheduler
-scripts/                  migrate and seed
+scripts/                  migrate and demo seeds
 drizzle/                  SQL migrations
 ```
 
@@ -110,25 +117,30 @@ The server runs migrations at startup. Seed the demo data once:
 
 ```bash
 bun scripts/seed.ts
+bun scripts/seed-demo-proforma.ts   # optional sample proforma on the USB-C quote
 ```
 
 Then open `http://localhost:3000`.
 
 ### Environment
 
-| Variable                        | Purpose                                                     |
-| ------------------------------- | ----------------------------------------------------------- |
-| `DB_URL`                        | PostgreSQL connection string                                |
-| `DB_SSL_CA`                     | path to the CA certificate (default `./ca-certificate.crt`) |
-| `BETTER_AUTH_SECRET`            | better-auth signing secret                                  |
-| `APP_BASE_URL`                  | public app URL used in emails                               |
-| `BETTER_AUTH_BASE_URL`          | public auth URL                                             |
-| `RESEND_API_KEY`, `RESEND_FROM` | Resend credentials and sender                               |
-| `VULTR_INFERENCE_API_KEY`       | Vultr inference key                                         |
-| `VULTR_INFERENCE_MODEL`         | defaults to `deepseek-v4.1-flash-1017`                      |
-| `DEMO_MODE`                     | short quote windows in minutes                              |
-| `DEMO_EMAIL_OVERRIDE`           | redirect non-demo recipients to one inbox                   |
-| `AGENT_TICK_MS`                 | scheduler interval                                          |
+| Variable                           | Purpose                                                     |
+| ---------------------------------- | ----------------------------------------------------------- |
+| `DB_URL`                           | PostgreSQL connection string                                |
+| `DB_SSL_CA`                        | path to the CA certificate (default `./ca-certificate.crt`) |
+| `BETTER_AUTH_SECRET`               | better-auth signing secret                                  |
+| `APP_BASE_URL`                     | public app URL used in emails                               |
+| `BETTER_AUTH_BASE_URL`             | public auth URL                                             |
+| `RESEND_API_KEY`, `RESEND_FROM`    | Resend credentials and sender                               |
+| `VULTR_INFERENCE_API_KEY`          | Vultr inference key                                         |
+| `VULTR_INFERENCE_MODEL`            | defaults to `deepseek-v4.1-flash-1017`                      |
+| `AWS_ACCESS_KEY`, `AWS_SECRET_KEY` | Vultr Object Storage credentials                            |
+| `AWS_HOST_BASE`                    | S3 endpoint host, for example `ams1.vultrobjects.com`       |
+| `AWS_BUCKET`                       | private bucket for proforma invoices                        |
+| `AWS_REGION`                       | S3 signing region, defaults to `us-east-1`                  |
+| `DEMO_MODE`                        | short quote windows in minutes                              |
+| `DEMO_EMAIL_OVERRIDE`              | redirect non-demo recipients to one inbox                   |
+| `AGENT_TICK_MS`                    | scheduler interval                                          |
 
 See `src/env/server.ts` for every option and its default.
 
@@ -150,6 +162,7 @@ The app is deployed with Dokploy on a Vultr VM and served at `https://fastprok.k
 - Email replies are not read; vendors quote in the app. Inbound email parsing is the next step.
 - Delivery tracking and delay chasing are out of scope for this demo.
 - Single currency (NGN) and a fixed category list keep the demo focused.
+- Proforma invoices are limited to PDF, PNG, or JPG files up to 5 MB. They are stored privately and are not virus-scanned.
 - Vendor reliability is seeded history; the next version should update it from completed orders.
 - Member invitations, multiple contacts per vendor, and a rejection flow are intentionally deferred.
 

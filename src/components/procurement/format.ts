@@ -18,6 +18,45 @@ export const formatDateTime = (value: string) =>
     minute: "2-digit",
   }).format(new Date(value));
 
+export const formatRelativeTime = (value: string) => {
+  const difference = new Date(value).getTime() - Date.now();
+  const seconds = Math.round(difference / 1_000);
+
+  if (Math.abs(seconds) < 45) {
+    return "just now";
+  }
+
+  const formatter = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+  const units: Array<[Intl.RelativeTimeFormatUnit, number]> = [
+    ["year", 31_536_000],
+    ["month", 2_592_000],
+    ["week", 604_800],
+    ["day", 86_400],
+    ["hour", 3_600],
+    ["minute", 60],
+  ];
+
+  for (const [unit, size] of units) {
+    if (Math.abs(seconds) >= size) {
+      return formatter.format(Math.round(seconds / size), unit);
+    }
+  }
+
+  return "just now";
+};
+
+export const formatFileSize = (bytes: number) => {
+  if (bytes < 1_024) {
+    return `${bytes} B`;
+  }
+
+  if (bytes < 1_048_576) {
+    return `${(bytes / 1_024).toFixed(1)} KB`;
+  }
+
+  return `${(bytes / 1_048_576).toFixed(1)} MB`;
+};
+
 export const timeLeft = (value: string) => {
   const remaining = new Date(value).getTime() - Date.now();
 
@@ -52,6 +91,7 @@ const ACTION_LABELS: Record<string, string> = {
   "quote.submitted": "Quote submitted",
   "quote.updated": "Quote updated",
   "quote.approved": "Quote approved",
+  "quote.proforma_uploaded": "Proforma invoice uploaded",
 };
 
 export const actionLabel = (action: string) => ACTION_LABELS[action] ?? action;
@@ -87,6 +127,10 @@ export const describeAction = (action: string, detail: Record<string, unknown> |
     const total = count(detail.totalPriceCents);
 
     return [vendor, total !== null ? formatMoney(total) : null].filter(Boolean).join(", ");
+  }
+
+  if (action === "quote.proforma_uploaded") {
+    return [text(detail.vendorName), text(detail.fileName)].filter(Boolean).join(", ");
   }
 
   if (action === "vendors.widened") {

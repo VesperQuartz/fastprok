@@ -13,6 +13,7 @@ import { Route as dashboardRouteRouteImport } from './routes/(dashboard)/route'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as authRegisterRouteImport } from './routes/(auth)/register'
 import { Route as dashboardIndexRouteImport } from './routes/(dashboard)/index'
+import { Route as dashboardNotificationsRouteImport } from './routes/(dashboard)/notifications'
 import { Route as ApiSplatRouteImport } from './routes/api/$'
 import { Route as dashboardRequestsRequestIdRouteImport } from './routes/(dashboard)/requests/$requestId'
 import { Route as dashboardRequestsNewRouteImport } from './routes/(dashboard)/requests/new'
@@ -37,6 +38,11 @@ const authRegisterRoute = authRegisterRouteImport.update({
 const dashboardIndexRoute = dashboardIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => dashboardRouteRoute,
+} as any)
+const dashboardNotificationsRoute = dashboardNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
   getParentRoute: () => dashboardRouteRoute,
 } as any)
 const ApiSplatRoute = ApiSplatRouteImport.update({
@@ -75,6 +81,7 @@ const dashboardVendorRequestsRequestIdRoute =
 export interface FileRoutesByFullPath {
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
+  '/notifications': typeof dashboardNotificationsRoute
   '/api/$': typeof ApiSplatRoute
   '/': typeof dashboardIndexRoute
   '/requests/$requestId': typeof dashboardRequestsRequestIdRoute
@@ -86,6 +93,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
+  '/notifications': typeof dashboardNotificationsRoute
   '/api/$': typeof ApiSplatRoute
   '/': typeof dashboardIndexRoute
   '/requests/$requestId': typeof dashboardRequestsRequestIdRoute
@@ -99,6 +107,7 @@ export interface FileRoutesById {
   '/(dashboard)': typeof dashboardRouteRouteWithChildren
   '/(auth)/login': typeof authLoginRoute
   '/(auth)/register': typeof authRegisterRoute
+  '/(dashboard)/notifications': typeof dashboardNotificationsRoute
   '/api/$': typeof ApiSplatRoute
   '/(dashboard)/': typeof dashboardIndexRoute
   '/(dashboard)/requests/$requestId': typeof dashboardRequestsRequestIdRoute
@@ -112,6 +121,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/login'
     | '/register'
+    | '/notifications'
     | '/api/$'
     | '/'
     | '/requests/$requestId'
@@ -123,6 +133,7 @@ export interface FileRouteTypes {
   to:
     | '/login'
     | '/register'
+    | '/notifications'
     | '/api/$'
     | '/'
     | '/requests/$requestId'
@@ -135,6 +146,7 @@ export interface FileRouteTypes {
     | '/(dashboard)'
     | '/(auth)/login'
     | '/(auth)/register'
+    | '/(dashboard)/notifications'
     | '/api/$'
     | '/(dashboard)/'
     | '/(dashboard)/requests/$requestId'
@@ -183,6 +195,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof dashboardIndexRouteImport
       parentRoute: typeof dashboardRouteRoute
     }
+    '/(dashboard)/notifications': {
+      id: '/(dashboard)/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof dashboardNotificationsRouteImport
+      parentRoute: typeof dashboardRouteRoute
+    }
     '/api/$': {
       id: '/api/$'
       path: '/api/$'
@@ -229,6 +248,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface dashboardRouteRouteChildren {
+  dashboardNotificationsRoute: typeof dashboardNotificationsRoute
   dashboardIndexRoute: typeof dashboardIndexRoute
   dashboardRequestsRequestIdRoute: typeof dashboardRequestsRequestIdRoute
   dashboardRequestsNewRoute: typeof dashboardRequestsNewRoute
@@ -236,6 +256,7 @@ interface dashboardRouteRouteChildren {
 }
 
 const dashboardRouteRouteChildren: dashboardRouteRouteChildren = {
+  dashboardNotificationsRoute: dashboardNotificationsRoute,
   dashboardIndexRoute: dashboardIndexRoute,
   dashboardRequestsRequestIdRoute: dashboardRequestsRequestIdRoute,
   dashboardRequestsNewRoute: dashboardRequestsNewRoute,

@@ -6,6 +6,7 @@ import { tryDatabase } from "@/lib/result/database";
 import { NotFoundError, type AppError } from "@/lib/result/errors";
 import {
   invitations,
+  quoteDocuments,
   quoteRevisions,
   quotes,
   requests,
@@ -13,6 +14,7 @@ import {
   type ParsedRequest,
   type Recommendation,
 } from "@/repo/schema";
+import type { ProformaMetadata } from "./proforma";
 
 export type BuyerRequestView = {
   kind: "buyer";
@@ -72,6 +74,7 @@ export type VendorRequestView = {
     firstSubmittedAt: string;
     updatedAt: string;
     version: number;
+    document: ProformaMetadata | null;
   } | null;
 };
 
@@ -229,8 +232,13 @@ export const getVendorRequest = async (
           from ${quoteRevisions}
           where ${quoteRevisions.quoteId} = ${quotes.id}
         )`,
+        documentFileName: quoteDocuments.fileName,
+        documentMimeType: quoteDocuments.mimeType,
+        documentSizeBytes: quoteDocuments.sizeBytes,
+        documentUpdatedAt: quoteDocuments.updatedAt,
       })
       .from(quotes)
+      .leftJoin(quoteDocuments, eq(quoteDocuments.quoteId, quotes.id))
       .where(and(eq(quotes.requestId, requestId), eq(quotes.vendorId, actor.vendorId)))
       .limit(1),
   );
@@ -247,10 +255,30 @@ export const getVendorRequest = async (
       },
       quote: quote
         ? {
-            ...quote,
+            id: quote.id,
+            unitPriceCents: quote.unitPriceCents,
+            totalPriceCents: quote.totalPriceCents,
+            quantityOffered: quote.quantityOffered,
+            deliveryDate: quote.deliveryDate,
+            warrantyMonths: quote.warrantyMonths,
+            validUntil: quote.validUntil,
+            notes: quote.notes,
+            status: quote.status,
             version: quote.version ?? 1,
             firstSubmittedAt: quote.firstSubmittedAt.toISOString(),
             updatedAt: quote.updatedAt.toISOString(),
+            document:
+              quote.documentFileName &&
+              quote.documentMimeType &&
+              quote.documentSizeBytes !== null &&
+              quote.documentUpdatedAt
+                ? {
+                    fileName: quote.documentFileName,
+                    mimeType: quote.documentMimeType,
+                    sizeBytes: quote.documentSizeBytes,
+                    uploadedAt: quote.documentUpdatedAt.toISOString(),
+                  }
+                : null,
           }
         : null,
     };

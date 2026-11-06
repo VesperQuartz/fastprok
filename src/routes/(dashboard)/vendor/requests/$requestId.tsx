@@ -5,6 +5,7 @@ import { Link, createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { formatDate, formatDateTime, formatMoney } from "@/components/procurement/format";
+import { ProformaCard } from "@/components/procurement/proforma-card";
 import { StatusBadge } from "@/components/procurement/status-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -170,106 +171,115 @@ const VendorRequestPage = () => {
       ) : null}
 
       <div className="grid gap-5 lg:grid-cols-[1fr_300px]">
-        <Card className="border-border/70 shadow-none">
-          <CardHeader className="flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm">{quote ? "Your quote" : "Submit a quote"}</CardTitle>
-            {quote ? (
-              <span className="text-muted-foreground text-xs">Version {quote.version}</span>
-            ) : null}
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={onSubmit} className="space-y-4">
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="unitPrice">Unit price (NGN)</Label>
-                  <Input
-                    id="unitPrice"
-                    type="number"
-                    min="0.01"
-                    step="0.01"
-                    value={unitPrice}
-                    onChange={(event) => setUnitPrice(event.target.value)}
-                    placeholder="45000"
-                    disabled={!isOpen}
-                    required
-                  />
+        <div className="space-y-5">
+          <Card className="border-border/70 shadow-none">
+            <CardHeader className="flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm">{quote ? "Your quote" : "Submit a quote"}</CardTitle>
+              {quote ? (
+                <span className="text-muted-foreground text-xs">Version {quote.version}</span>
+              ) : null}
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={onSubmit} className="space-y-4">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="unitPrice">Unit price (NGN)</Label>
+                    <Input
+                      id="unitPrice"
+                      type="number"
+                      min="0.01"
+                      step="0.01"
+                      value={unitPrice}
+                      onChange={(event) => setUnitPrice(event.target.value)}
+                      placeholder="45000"
+                      disabled={!isOpen}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="quantity">Quantity offered</Label>
+                    <Input
+                      id="quantity"
+                      type="number"
+                      min={1}
+                      value={quantity}
+                      onChange={(event) => setQuantity(event.target.value)}
+                      placeholder={String(request.quantity)}
+                      disabled={!isOpen}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="deliveryDate">Delivery date</Label>
+                    <Input
+                      id="deliveryDate"
+                      type="date"
+                      value={deliveryDate}
+                      onChange={(event) => setDeliveryDate(event.target.value)}
+                      disabled={!isOpen}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="validUntil">Valid until (optional)</Label>
+                    <Input
+                      id="validUntil"
+                      type="date"
+                      value={validUntil}
+                      onChange={(event) => setValidUntil(event.target.value)}
+                      disabled={!isOpen}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="warranty">Warranty (months)</Label>
+                    <Input
+                      id="warranty"
+                      type="number"
+                      min={0}
+                      value={warranty}
+                      onChange={(event) => setWarranty(event.target.value)}
+                      disabled={!isOpen}
+                    />
+                  </div>
+                  <div className="space-y-2 sm:col-span-2">
+                    <Label htmlFor="notes">Notes (optional)</Label>
+                    <Textarea
+                      id="notes"
+                      value={notes}
+                      onChange={(event) => setNotes(event.target.value)}
+                      placeholder="Delivery included. Prices valid for 30 days."
+                      disabled={!isOpen}
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="quantity">Quantity offered</Label>
-                  <Input
-                    id="quantity"
-                    type="number"
-                    min={1}
-                    value={quantity}
-                    onChange={(event) => setQuantity(event.target.value)}
-                    placeholder={String(request.quantity)}
-                    disabled={!isOpen}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="deliveryDate">Delivery date</Label>
-                  <Input
-                    id="deliveryDate"
-                    type="date"
-                    value={deliveryDate}
-                    onChange={(event) => setDeliveryDate(event.target.value)}
-                    disabled={!isOpen}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="validUntil">Valid until (optional)</Label>
-                  <Input
-                    id="validUntil"
-                    type="date"
-                    value={validUntil}
-                    onChange={(event) => setValidUntil(event.target.value)}
-                    disabled={!isOpen}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="warranty">Warranty (months)</Label>
-                  <Input
-                    id="warranty"
-                    type="number"
-                    min={0}
-                    value={warranty}
-                    onChange={(event) => setWarranty(event.target.value)}
-                    disabled={!isOpen}
-                  />
-                </div>
-                <div className="space-y-2 sm:col-span-2">
-                  <Label htmlFor="notes">Notes (optional)</Label>
-                  <Textarea
-                    id="notes"
-                    value={notes}
-                    onChange={(event) => setNotes(event.target.value)}
-                    placeholder="Delivery included. Prices valid for 30 days."
-                    disabled={!isOpen}
-                  />
-                </div>
-              </div>
 
-              <div className="flex flex-wrap items-center gap-3 border-t pt-4">
-                {isOpen ? (
-                  <>
-                    <Button type="submit" disabled={submit.isPending}>
-                      {submit.isPending ? "Saving…" : quote ? "Update quote" : "Submit quote"}
-                    </Button>
-                    <p className="text-muted-foreground text-xs">
-                      Editing keeps every earlier version. The latest version is the one scored.
+                <div className="flex flex-wrap items-center gap-3 border-t pt-4">
+                  {isOpen ? (
+                    <>
+                      <Button type="submit" disabled={submit.isPending}>
+                        {submit.isPending ? "Saving…" : quote ? "Update quote" : "Submit quote"}
+                      </Button>
+                      <p className="text-muted-foreground text-xs">
+                        Editing keeps every earlier version. The latest version is the one scored.
+                      </p>
+                    </>
+                  ) : (
+                    <p className="text-muted-foreground text-sm">
+                      This request is no longer accepting quotes.
                     </p>
-                  </>
-                ) : (
-                  <p className="text-muted-foreground text-sm">
-                    This request is no longer accepting quotes.
-                  </p>
-                )}
-              </div>
-            </form>
-          </CardContent>
-        </Card>
+                  )}
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+
+          <ProformaCard
+            requestId={requestId}
+            quoteId={quote?.id ?? null}
+            canUpload={isOpen && Boolean(quote)}
+            document={quote?.document ?? null}
+          />
+        </div>
 
         <Card className="h-fit border-border/70 shadow-none">
           <CardHeader className="pb-2">

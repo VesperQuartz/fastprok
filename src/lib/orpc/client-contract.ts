@@ -26,5 +26,7 @@ export const clientContract = {
   },
   notifications: {
     list: oc.route({ method: "GET", path: "/notifications" }),
+    markRead: oc.route({ method: "POST", path: "/notifications/{notificationId}/read" }),
+    markAllRead: oc.route({ method: "POST", path: "/notifications/read-all" }),
   },
 };

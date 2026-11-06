@@ -22,6 +22,7 @@ import {
   priorityLabel,
   timeLeft,
 } from "@/components/procurement/format";
+import { ProformaAttachment } from "@/components/procurement/proforma-attachment";
 import { StatusBadge } from "@/components/procurement/status-badge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -89,7 +90,9 @@ const Timeline = ({ requestId }: { requestId: string }) => {
                   : item.actorType === "human"
                     ? {
                         label:
-                          item.action === "quote.submitted" || item.action === "quote.updated"
+                          item.action === "quote.submitted" ||
+                          item.action === "quote.updated" ||
+                          item.action === "quote.proforma_uploaded"
                             ? "Vendor"
                             : "Buyer",
                         icon: UserIcon,
@@ -199,6 +202,7 @@ const RequestDetailPage = () => {
   const quoteRows = quotes.data ?? [];
   const winner = recommendation?.winner ?? null;
   const approvedQuote = quoteRows.find((quote) => quote.status === "won") ?? null;
+  const winnerDocument = quoteRows.find((quote) => quote.id === winner?.quoteId)?.document ?? null;
 
   return (
     <div className="space-y-5">
@@ -303,6 +307,9 @@ const RequestDetailPage = () => {
                       }
                     />
                   </dl>
+                ) : null}
+                {winner && winnerDocument ? (
+                  <ProformaAttachment quoteId={winner.quoteId} document={winnerDocument} />
                 ) : null}
               </div>
               {winner ? (
@@ -427,6 +434,8 @@ const RequestDetailPage = () => {
               {recommendation ? (
                 recommendation.ranked.map((quote) => {
                   const isWinner = winner?.quoteId === quote.quoteId;
+                  const document =
+                    quoteRows.find((row) => row.id === quote.quoteId)?.document ?? null;
 
                   return (
                     <div
@@ -502,6 +511,10 @@ const RequestDetailPage = () => {
                         </div>
                       ) : null}
 
+                      {document ? (
+                        <ProformaAttachment quoteId={quote.quoteId} document={document} />
+                      ) : null}
+
                       {!isWinner && quote.aiReason ? (
                         <details className="mt-3">
                           <summary className="cursor-pointer text-muted-foreground text-xs hover:text-foreground">
@@ -543,6 +556,9 @@ const RequestDetailPage = () => {
                         value={`${quote.quantityOffered} of ${request.quantity}`}
                       />
                     </dl>
+                    {quote.document ? (
+                      <ProformaAttachment quoteId={quote.id} document={quote.document} />
+                    ) : null}
                   </div>
                 ))
               ) : (

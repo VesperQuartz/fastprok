@@ -13,6 +13,7 @@ import {
 } from "@/lib/result/errors";
 import {
   invitations,
+  quoteDocuments,
   quoteRevisions,
   quotes,
   requests,
@@ -22,6 +23,7 @@ import {
 } from "@/repo/schema";
 import { logAgentAction } from "./agent-log";
 import { dispatchEmailsInBackground, queueNotification } from "./notifications";
+import type { ProformaMetadata } from "./proforma";
 
 export type QuoteInput = {
   requestId: string;
@@ -56,6 +58,7 @@ export type QuoteView = {
   version: number;
   firstSubmittedAt: string;
   updatedAt: string;
+  document: ProformaMetadata | null;
 };
 
 const isIsoDate = (value: string) => /^\d{4}-\d{2}-\d{2}$/.test(value);
@@ -374,19 +377,38 @@ export const listRequestQuotes = async (
           from ${quoteRevisions}
           where ${quoteRevisions.quoteId} = ${quotes.id}
         )`,
+        documentFileName: quoteDocuments.fileName,
+        documentMimeType: quoteDocuments.mimeType,
+        documentSizeBytes: quoteDocuments.sizeBytes,
+        documentUpdatedAt: quoteDocuments.updatedAt,
       })
       .from(quotes)
       .innerJoin(vendors, eq(quotes.vendorId, vendors.id))
+      .leftJoin(quoteDocuments, eq(quoteDocuments.quoteId, quotes.id))
       .where(scope)
       .orderBy(asc(quotes.firstSubmittedAt));
   });
 
   return rows.map((list) =>
-    list.map((quote) => ({
-      ...quote,
-      version: quote.version ?? 1,
-      firstSubmittedAt: quote.firstSubmittedAt.toISOString(),
-      updatedAt: quote.updatedAt.toISOString(),
-    })),
+    list.map((quote) => {
+      const { documentFileName, documentMimeType, documentSizeBytes, documentUpdatedAt, ...rest } =
+        quote;
+
+      return {
+        ...rest,
+        version: quote.version ?? 1,
+        firstSubmittedAt: quote.firstSubmittedAt.toISOString(),
+        updatedAt: quote.updatedAt.toISOString(),
+        document:
+          documentFileName && documentMimeType && documentSizeBytes !== null && documentUpdatedAt
+            ? {
+                fileName: documentFileName,
+                mimeType: documentMimeType,
+                sizeBytes: documentSizeBytes,
+                uploadedAt: documentUpdatedAt.toISOString(),
+              }
+            : null,
+      };
+    }),
   );
 };
