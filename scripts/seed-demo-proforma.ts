@@ -1,4 +1,6 @@
 import { and, desc, eq } from "drizzle-orm";
+import { requestAudience } from "@/domain/notification-audience";
+import { queueNotification } from "@/domain/notifications";
 import { db, pool } from "@/lib/db";
 import { putObject, removeObject } from "@/lib/storage";
 import { agentActions, quoteDocuments, quotes, requests, vendors } from "@/repo/schema";
@@ -12,6 +14,8 @@ const rows = await db
     quoteUpdatedAt: quotes.updatedAt,
     requestId: requests.id,
     requestTitle: requests.title,
+    organizationId: requests.organizationId,
+    createdByUserId: requests.createdByUserId,
     vendorName: vendors.name,
     submittedByUserId: quotes.submittedByUserId,
   })
@@ -72,20 +76,33 @@ await db
     },
   });
 
-if (!previousKey) {
-  await db.insert(agentActions).values({
+await db.transaction(async (tx) => {
+  const audience = await requestAudience(tx, target.organizationId, target.createdByUserId);
+
+  await queueNotification(tx, {
+    eventKey: `request:${target.requestId}:proforma:seed`,
+    type: "quote.proforma",
     requestId: target.requestId,
-    actorType: "human",
-    actorUserId: target.submittedByUserId,
-    action: "quote.proforma_uploaded",
-    detail: {
-      quoteId: target.quoteId,
-      vendorName: target.vendorName,
-      fileName: "Yaba-Gadgets-Proforma-Invoice.pdf",
-      sizeBytes: fixture.size,
-    },
+    recipients: audience,
+    title: "Proforma invoice uploaded",
+    body: `${target.vendorName} attached Yaba-Gadgets-Proforma-Invoice.pdf to ${target.requestTitle}.`,
   });
-}
+
+  if (!previousKey) {
+    await tx.insert(agentActions).values({
+      requestId: target.requestId,
+      actorType: "human",
+      actorUserId: target.submittedByUserId,
+      action: "quote.proforma_uploaded",
+      detail: {
+        quoteId: target.quoteId,
+        vendorName: target.vendorName,
+        fileName: "Yaba-Gadgets-Proforma-Invoice.pdf",
+        sizeBytes: fixture.size,
+      },
+    });
+  }
+});
 
 if (previousKey && previousKey !== storageKey) {
   const removed = await removeObject(previousKey);
