@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
+  bigint,
   boolean,
   char,
   date,
@@ -216,7 +217,7 @@ export const requests = pgTable(
     unit: text("unit").notNull().default("unit"),
     deliveryRegion: text("delivery_region").notNull(),
     neededBy: date("needed_by", { mode: "string" }).notNull(),
-    budgetCents: integer("budget_cents"),
+    budgetCents: bigint("budget_cents", { mode: "number" }),
     currency: char("currency", { length: 3 }).notNull().default("NGN"),
     priority: requestPriority("priority").notNull().default("balanced"),
     status: requestStatus("status").notNull().default("draft"),
@@ -274,8 +275,8 @@ export const quotes = pgTable(
     submittedByUserId: text("submitted_by_user_id")
       .notNull()
       .references(() => user.id, { onDelete: "restrict" }),
-    unitPriceCents: integer("unit_price_cents").notNull(),
-    totalPriceCents: integer("total_price_cents").notNull(),
+    unitPriceCents: bigint("unit_price_cents", { mode: "number" }).notNull(),
+    totalPriceCents: bigint("total_price_cents", { mode: "number" }).notNull(),
     quantityOffered: integer("quantity_offered").notNull(),
     deliveryDate: date("delivery_date", { mode: "string" }).notNull(),
     warrantyMonths: integer("warranty_months").notNull().default(0),
