@@ -9,8 +9,7 @@ import { nitro } from "nitro/vite";
 import { defineConfig, lazyPlugins } from "vite-plus";
 import removeConsole from "vite-plugin-remove-console";
 
-const config = defineConfig(({ mode }) => {
-  console.log("mode", mode);
+const config = defineConfig(() => {
   return {
     staged: {
       "*": "vp check --fix",
