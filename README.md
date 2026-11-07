@@ -74,7 +74,7 @@ flowchart LR
   SCH[Agent scheduler<br/>every 60s] --> D
 ```
 
-## Architecture
+## Project structure
 
 ```
 src/

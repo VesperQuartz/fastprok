@@ -14,7 +14,7 @@ Procurement drags because the work is coordination, not typing. Someone has to r
 
 fastprok does that coordination. The requester writes one paragraph. Vultr Serverless Inference turns it into structured fields and asks for anything missing. Rules match vendors by category, region, lead time, and reliability. Invitations go out in-app and by email. The agent reminds silent vendors when a quarter of the quote window remains, widens the pool once when there are too few quotes, then scores every quote on cost, speed, reliability, and warranty using weights that match the buyer's priority. The same input always produces the same ranking. AI writes the explanations from the scored numbers only; it never changes the ranking and never approves.
 
-Approvers see the top quotes with the numbers behind each score, an agent timeline, and one approval action. Vendors see only their own quote, can attach an optional proforma invoice, and can edit it before the deadline, with every version kept. Approval notifies the winner and the rest. Every event lands in an in-app notification bell that deep-links to the request and tracks read state.
+Approvers see the top quotes with the numbers behind each score, an agent timeline, and one approval action. Vendors see only their own quote, can attach an optional proforma invoice, and can edit it before the deadline, with every version kept. Approval notifies the winner and the rest. Every event lands in an in-app notification bell that deep-links to the request and tracks read state. While the app tab stays open, an optional browser alert raises a system notification for new activity.
 
 Built with TanStack Start, Bun, oRPC, Drizzle, better-result, Vultr Managed PostgreSQL, Vultr Object Storage, Vultr Serverless Inference (deepseek-v4.1-flash-1017), and Resend. Deployed with Dokploy on a Vultr Cloud Compute VM.
 
@@ -35,19 +35,19 @@ Password for all: `demo1234`
 ## 2–3 minute video script
 
 1. **0:00–0:15 — Hook.** Dashboard. "A purchase request usually means a week of email. Watch this one finish in minutes."
-2. **0:15–0:55 — Request.** Sign in as Requester, open **New request**, paste: "We need 15 USB-C docking stations for the customer success team in Lagos. Needed by 24 November. Budget is ₦2,700,000. Prioritise the cheapest reliable option." Submit. Point out the AI-structured fields, the invited vendors, and the agent timeline. Open the notification bell and show the unread badge and the "request sent" event.
-3. **0:55–1:30 — Vendor side.** Sign out, use the Vendor demo button. Open the invitation, submit a quote, then attach a proforma invoice (PDF). Show the attachment card and mention that quotes and files stay private to the buyer and that vendor. Edit the price to show versions are kept.
-4. **1:30–2:00 — Agent work and notifications.** Back as Requester. Show the bell increment, open the proforma notification, and land on the request. Press **Run agent check** / **Rank now**. Show the ranked quotes, the score breakdown, flags such as over budget, and the AI reasons that quote only the scored numbers.
-5. **2:00–2:30 — Approval.** Sign in as Approver, open the winner's proforma invoice, add a short note, and approve. Show the request status change and the winner/other notifications. Mention only a human can approve.
+2. **0:15–0:50 — Request.** Sign in as Requester and open **27-inch monitors**. Read the one-paragraph request, then point out the AI-structured fields: 6 units, Lagos, ₦1,800,000 budget, 30 November. Show the three matched vendors and the agent timeline, including "AI structured the request in 5.7s". Open the notification bell and show the unread badge.
+3. **0:50–1:30 — Vendor side.** Sign out, use the Vendor demo button. Open the **27-inch monitors** invitation, submit a quote, then attach a proforma invoice (PDF). Show the attachment card and mention that quotes and files stay private to the buyer and that vendor. Edit the price to show versions are kept.
+4. **1:30–2:00 — Agent work and notifications.** Back as Requester. Show the bell increment, open the proforma notification, and land on the request. Press **Run agent check** / **Rank now**. Show the ranked quote, the score breakdown, flags such as over budget, and the AI reasons that quote only the scored numbers.
+5. **2:00–2:30 — Approval.** Sign in as Approver, open **USB-C docking stations**, open the winner's proforma invoice, add a short note, and approve. Show the request status change and the winner/other notifications. Mention only a human can approve.
 6. **2:30–2:45 — Close.** Scroll the agent timeline. "Every decision is repeatable, every action is logged, and Vultr runs the model, the database, the files, and the app."
 
 ## Pre-recording checklist
 
 - [ ] `https://fastprok.kekere.online/api/health` returns `{"status":"ok","database":"up"}`
 - [ ] Login page demo buttons work (Requester, Approver, Vendor)
-- [ ] One request is `Awaiting approval` with three ranked quotes for the approval shot
-- [ ] The winning USB-C quote has the sample proforma invoice attached
-- [ ] One request is `Collecting quotes` with a submitted quote for the vendor edit shot
+- [ ] **27-inch monitors** is `Collecting quotes`, the deadline is still open, and Ikeja Tech Hub has an unquoted invitation
+- [ ] **USB-C docking stations** is `Awaiting approval` with three ranked quotes and the sample proforma on the winning Yaba Gadgets quote
 - [ ] The notification bell shows unread activity for the requester and approver
 - [ ] Gmail inbox is open in a second tab to show invitation/approval emails
 - [ ] Browser zoom at 100%, notifications muted, bookmarks hidden
+- [ ] Optional: click **Enable browser alerts** in the bell before recording, then keep the tab open
