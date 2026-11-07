@@ -7,6 +7,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { orpc } from "@/lib/orpc/client";
+import { BrowserAlertsRow } from "./browser-alerts";
 import { NotificationRow } from "./notification-row";
 
 export const NotificationBell = () => {
@@ -66,6 +67,8 @@ export const NotificationBell = () => {
             Mark all as read
           </Button>
         </div>
+
+        <BrowserAlertsRow />
 
         {list.isPending ? (
           <div className="space-y-3 p-4">

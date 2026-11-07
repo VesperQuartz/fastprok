@@ -3,6 +3,7 @@ import { BellIcon, BellOffIcon } from "@hugeicons/core-free-icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { BrowserAlertsButton } from "@/components/procurement/browser-alerts";
 import { NotificationRow } from "@/components/procurement/notification-row";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -50,13 +51,16 @@ const NotificationsPage = () => {
             Invitations, quotes, reminders, and approvals.
           </p>
         </div>
-        <Button
-          variant="outline"
-          disabled={unread === 0 || markAll.isPending}
-          onClick={() => markAll.mutate()}
-        >
-          Mark all as read
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <BrowserAlertsButton />
+          <Button
+            variant="outline"
+            disabled={unread === 0 || markAll.isPending}
+            onClick={() => markAll.mutate()}
+          >
+            Mark all as read
+          </Button>
+        </div>
       </div>
 
       <Tabs

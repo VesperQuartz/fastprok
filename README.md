@@ -28,6 +28,7 @@ The login page has one-click demo buttons for the requester, approver, and a ven
 - **Vendor:** see invitations, submit a quote, attach an optional proforma invoice, edit the quote before the deadline (every version is kept), see the outcome after approval.
 - **Agent:** reminder schedule, one-time vendor widening, deadline ranking, AI explanations sourced only from scored data, in-app notifications, and the email outbox.
 - **Notifications:** a bell in the workspace header shows unread activity, deep-links to the request, and marks items read. The full page is at `/notifications`.
+- **Browser alerts:** an optional button in the bell asks for browser notification permission. Once allowed, new activity raises a system notification while the app tab stays open. Clicking the alert opens the request.
 
 ## How the agent decides
 
