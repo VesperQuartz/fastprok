@@ -20,6 +20,10 @@ Built with TanStack Start, Bun, oRPC, Drizzle, better-result, Vultr Managed Post
 
 Live demo: https://fastprok.kekere.online
 
+## Slide deck
+
+PDF: `slides/fastprok-slides.pdf` (11 slides, 16:9). Editable Typst source: `slides/fastprok-slides.typ`.
+
 ## Tech tags
 
 `Vultr` `Serverless Inference` `Managed PostgreSQL` `Object Storage` `Bun` `TypeScript` `TanStack Start` `oRPC` `AI Agents` `Procurement`
