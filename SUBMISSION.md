@@ -41,6 +41,19 @@ Password for all: `demo1234`
 5. **2:00–2:30 — Approval.** Sign in as Approver, open **USB-C docking stations**, open the winner's proforma invoice, add a short note, and approve. Show the request status change and the winner/other notifications. Mention only a human can approve.
 6. **2:30–2:45 — Close.** Scroll the agent timeline. "Every decision is repeatable, every action is logged, and Vultr runs the model, the database, the files, and the app."
 
+### Suggested vendor quote
+
+- Unit price: `290000`
+- Quantity: `6`
+- Delivery date: `20 November 2026`
+- Warranty: `24` months
+- Valid until: `30 November 2026`
+- Notes: `Price includes delivery and installation.`
+
+### Suggested approval note
+
+`Approved for the Lagos office. Delivery and warranty match the request.`
+
 ## Pre-recording checklist
 
 - [ ] `https://fastprok.kekere.online/api/health` returns `{"status":"ok","database":"up"}`
